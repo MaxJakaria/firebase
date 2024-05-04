@@ -1,5 +1,6 @@
 import 'package:firebase/UI/login_page.dart';
 import 'package:firebase/UI/uihelper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -13,9 +14,31 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
+  SignUp(String email, String password) async {
+    if (email == "" || password == "") {
+      UIhelper.customAlertBox(context, "Enter required fields");
+    } else {
+      UserCredential? userCredential;
+      try {
+        userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: email, password: password)
+            .then(
+              (value) => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Scaffold(),
+                ),
+              ),
+            );
+      } on FirebaseAuthException catch (ex) {
+        UIhelper.customAlertBox(context, ex.code.toString());
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
@@ -34,28 +57,27 @@ class _SignUpPageState extends State<SignUpPage> {
           const SizedBox(height: 30),
           //UIhelper.customButton(() {}, "Login", context),
           UIhelper.customButton(() {}, "Sign Up", context),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 "Already have an account?",
-                style:
-                    TextStyle(fontSize: _width * 0.04, color: Colors.black54),
+                style: TextStyle(fontSize: width * 0.04, color: Colors.black54),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => LoginPage(),
+                      builder: (context) => const LoginPage(),
                     ),
                   );
                 },
                 child: Text(
                   'Login',
                   style: TextStyle(
-                      fontSize: _width * 0.04,
+                      fontSize: width * 0.04,
                       color: Colors.blueAccent,
                       fontWeight: FontWeight.bold),
                 ),

@@ -15,7 +15,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
@@ -31,28 +31,28 @@ class _LoginPageState extends State<LoginPage> {
           const SizedBox(height: 30),
           UIhelper.customButton(() {}, "Login", context),
           //UIhelper.customButton(() { }, "Sign-up", context),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 "Don't have any account?",
                 style:
-                    TextStyle(fontSize: _width * 0.04, color: Colors.black54),
+                    TextStyle(fontSize: width * 0.04, color: Colors.black54),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SignUpPage(),
+                      builder: (context) => const SignUpPage(),
                     ),
                   );
                 },
                 child: Text(
                   'Sign-up',
                   style: TextStyle(
-                      fontSize: _width * 0.04,
+                      fontSize: width * 0.04,
                       color: Colors.blueAccent,
                       fontWeight: FontWeight.bold),
                 ),
