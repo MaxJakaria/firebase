@@ -13,11 +13,17 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
 
-  SignUp(String email, String password) async {
-    if (email == "" || password == "") {
-      UIhelper.customAlertBox(context, "Enter required fields");
-    } else {
+  //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SIGN UP FUNCTIONS
+  SignUp(String email, String password, String confirmPassword) async {
+    if (email == "" || password == "" || confirmPassword == "") {
+      UIhelper.customAlertBox(context, "Enter required fields !");
+    }
+    else if(password != confirmPassword){
+      UIhelper.customAlertBox(context, "Passwords are not same !");
+    }
+    else {
       UserCredential? userCredential;
       try {
         userCredential = await FirebaseAuth.instance
@@ -52,11 +58,16 @@ class _SignUpPageState extends State<SignUpPage> {
           UIhelper.customTextField(
               passwordController, "Password", Icons.key, false, context),
 
-          UIhelper.customTextField(passwordController, "Confirm Password",
-              Icons.key, false, context),
+          UIhelper.customTextField(confirmPasswordController,
+              "Confirm password", Icons.key, false, context),
           const SizedBox(height: 30),
-          //UIhelper.customButton(() {}, "Login", context),
-          UIhelper.customButton(() {}, "Sign Up", context),
+          //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CUSTOM BUTTON
+          UIhelper.customButton(() {
+            SignUp(
+                emailController.text.toString(),
+                passwordController.text.toString(),
+                confirmPasswordController.text.toString());
+          }, "Sign Up", context),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

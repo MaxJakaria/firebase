@@ -4,7 +4,7 @@ class UIhelper {
   static customTextField(TextEditingController controller, String text,
       IconData iconData, bool toHide, BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
+
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: TextField(
@@ -26,7 +26,6 @@ class UIhelper {
   static customButton(
       VoidCallback voidCallback, String text, BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
 
     return SizedBox(
       width: width * 0.4,
@@ -49,11 +48,26 @@ class UIhelper {
   }
 
   static customAlertBox(BuildContext context, String text) {
+    final width = MediaQuery.of(context).size.width;
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(text),
+          title: Text(
+            text,
+            style: TextStyle(color: Colors.blueGrey),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(
+                'Ok',
+                style: TextStyle(fontSize: width * 0.04, color: Colors.green),
+              ),
+            )
+          ],
         );
       },
     );
