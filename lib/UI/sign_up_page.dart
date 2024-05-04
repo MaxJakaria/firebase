@@ -1,3 +1,4 @@
+import 'package:firebase/UI/homepage.dart';
 import 'package:firebase/UI/login_page.dart';
 import 'package:firebase/UI/uihelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,7 +16,7 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
 
-  //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SIGN UP FUNCTIONS
+  //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SIGN UP FUNCTIONS
   SignUp(String email, String password, String confirmPassword) async {
     if (email == "" || password == "" || confirmPassword == "") {
       UIhelper.customAlertBox(context, "Enter required fields !");
@@ -32,7 +33,7 @@ class _SignUpPageState extends State<SignUpPage> {
               (value) => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Scaffold(),
+                  builder: (context) => MyHomePage(),
                 ),
               ),
             );
@@ -61,7 +62,7 @@ class _SignUpPageState extends State<SignUpPage> {
           UIhelper.customTextField(confirmPasswordController,
               "Confirm password", Icons.key, false, context),
           const SizedBox(height: 30),
-          //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CUSTOM BUTTON
+          //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CUSTOM BUTTON
           UIhelper.customButton(() {
             SignUp(
                 emailController.text.toString(),

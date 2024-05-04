@@ -1,3 +1,4 @@
+import 'package:firebase/UI/homepage.dart';
 import 'package:firebase/UI/sign_up_page.dart';
 import 'package:firebase/UI/uihelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -27,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
               (value) => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Scaffold(),
+                  builder: (context) => MyHomePage(),
                 ),
               ),
             );
