@@ -1,3 +1,5 @@
+import 'package:firebase/UI/login_page.dart';
+import 'package:firebase/UI/sign_up_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -23,7 +25,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Center(child: const Text("Jakaria")),
+      home: LoginPage(),
     );
   }
 }
