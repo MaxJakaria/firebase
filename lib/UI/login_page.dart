@@ -1,3 +1,4 @@
+import 'package:firebase/Check/forgot_password.dart';
 import 'package:firebase/UI/homepage.dart';
 import 'package:firebase/UI/sign_up_page.dart';
 import 'package:firebase/UI/uihelper.dart';
@@ -25,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
         userCredential = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: email, password: password)
             .then(
-              (value) => Navigator.push(
+              (value) => Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => MyHomePage(),
@@ -61,6 +62,25 @@ class _LoginPageState extends State<LoginPage> {
                 passwordController.text.toString());
           }, "Login", context),
 
+          SizedBox(
+            height: 5,
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ForgotPassword(),
+                ),
+              );
+            },
+            child: Text(
+              'Forgotten Password?',
+              style:
+                  TextStyle(fontSize: width * 0.04, color: Colors.blueAccent),
+            ),
+          ),
+
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -87,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );

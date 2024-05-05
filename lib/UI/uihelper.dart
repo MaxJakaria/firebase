@@ -28,7 +28,6 @@ class UIhelper {
     final width = MediaQuery.of(context).size.width;
 
     return SizedBox(
-      width: width * 0.4,
       child: ElevatedButton(
         onPressed: () {
           voidCallback();
