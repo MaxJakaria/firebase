@@ -1,4 +1,4 @@
-import 'package:firebase/UI/homepage.dart';
+import 'package:firebase/Cloude%20Storage/profile_pic.dart';
 import 'package:firebase/UI/login_page.dart';
 import 'package:firebase/UI/uihelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,10 +30,10 @@ class _SignUpPageState extends State<SignUpPage> {
         userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password)
             .then(
-              (value) => Navigator.push(
+              (value) => Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MyHomePage(),
+                  builder: (context) => const ProfilePic(),
                 ),
               ),
             );

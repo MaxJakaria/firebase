@@ -54,7 +54,7 @@ class UIhelper {
         return AlertDialog(
           title: Text(
             text,
-            style: TextStyle(color: Colors.blueGrey),
+            style: const TextStyle(color: Colors.blueGrey),
           ),
           actions: [
             TextButton(

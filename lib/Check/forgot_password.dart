@@ -1,8 +1,6 @@
-import 'package:firebase/UI/homepage.dart';
 import 'package:firebase/UI/login_page.dart';
 import 'package:firebase/UI/uihelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -23,7 +21,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         return AlertDialog(
           title: Text(
             text,
-            style: TextStyle(color: Colors.blueGrey),
+            style: const TextStyle(color: Colors.blueGrey),
           ),
           actions: [
             TextButton(
@@ -31,7 +29,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LoginPage(),
+                    builder: (context) => const LoginPage(),
                   ),
                 );
               },
@@ -60,16 +58,16 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Forgot Password'),
+        title: const Text('Forgot Password'),
         centerTitle: true,
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 50),
+        padding: const EdgeInsets.symmetric(vertical: 50),
         child: Column(
           children: [
             UIhelper.customTextField(
                 emailController, 'Email', Icons.email_outlined, false, context),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             UIhelper.customButton(() {

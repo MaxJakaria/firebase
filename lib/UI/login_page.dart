@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
               (value) => Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MyHomePage(),
+                  builder: (context) => const MyHomePage(),
                 ),
               ),
             );
@@ -62,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
                 passwordController.text.toString());
           }, "Login", context),
 
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
           TextButton(
@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ForgotPassword(),
+                  builder: (context) => const ForgotPassword(),
                 ),
               );
             },
