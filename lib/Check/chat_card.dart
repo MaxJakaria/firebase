@@ -14,15 +14,15 @@ class _ChatCardState extends State<ChatCard> {
 
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
 
     return InkWell(
       onTap: (){},
       child: Card(
-        margin: EdgeInsets.symmetric(horizontal: _width*0.04, vertical: 4),
+        margin: EdgeInsets.symmetric(horizontal: width*0.04, vertical: 4),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         elevation: 0.5,
-        child: ListTile(
+        child: const ListTile(
           leading: CircleAvatar(child: Icon(CupertinoIcons.person),),
           title: Text('Demo user'),
           subtitle: Text('Last user massage', maxLines: 1,),

@@ -1,4 +1,6 @@
-import 'package:firebase/Check/chat_card.dart';
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -13,14 +15,32 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chat'),
+        title: const Text('Chat'),
       ),
-      body: ListView.builder(
-        itemCount: 10,
-        physics: BouncingScrollPhysics(),
-        itemBuilder: (context,index){
-          return ChatCard();
-        },
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection('user').snapshots(),
+        builder: (context, snapshot) {
+
+          final list = [];
+
+          if(snapshot.hasData){
+            final data = snapshot.data?.docs;
+            for(var i in data!){
+              log('${i.data()}');
+              list.add(i.data()['name']);
+            }
+          }
+
+
+          return ListView.builder(
+            itemCount: list.length,
+            physics: const BouncingScrollPhysics(),
+            itemBuilder: (context,index){
+              // return const ChatCard();
+              return Text('Name: ${list[index]}');
+            },
+          );
+        }
       ),
     );
   }
