@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase/Cloude%20Storage/profile_pic.dart';
 import 'package:firebase/UI/login_page.dart';
 import 'package:firebase/UI/uihelper.dart';
@@ -12,31 +13,48 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
 
   //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SIGN UP FUNCTIONS
-  SignUp(String email, String password, String confirmPassword) async {
-    if (email == "" || password == "" || confirmPassword == "") {
+
+  SignUp(String name, String email, String password,
+      String confirmPassword) async {
+    if (name == "" || email == "" || password == "" || confirmPassword == "") {
       UIhelper.customAlertBox(context, "Enter required fields !");
-    }
-    else if(password != confirmPassword){
-      UIhelper.customAlertBox(context, "Passwords are not same !");
-    }
-    else {
-      UserCredential? userCredential;
+    } else if (password != confirmPassword) {
+      UIhelper.customAlertBox(context, "Passwords are not the same !");
+    } else {
       try {
-        userCredential = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(email: email, password: password)
-            .then(
-              (value) => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ProfilePic(),
-                ),
-              ),
-            );
+        // Create user in Firebase Authentication
+        UserCredential userCredential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+
+        // Get the user's UID
+        final uid = userCredential.user!.uid;
+
+        // Save name and email to Firestore
+        await FirebaseFirestore.instance
+            .collection('user')
+            .doc(uid.toString())
+            .set({
+          'name': name,
+          'email': email,
+          // Add more fields if needed
+        });
+
+        // Navigate to the next screen after successful sign-up
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ProfilePic(),
+          ),
+        );
       } on FirebaseAuthException catch (ex) {
         UIhelper.customAlertBox(context, ex.code.toString());
       }
@@ -52,24 +70,31 @@ class _SignUpPageState extends State<SignUpPage> {
         title: const Text('Sign Up Page'),
         centerTitle: true,
       ),
-      body: Column(
+      body: ListView(
         children: [
+          //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Text Fields
+          UIhelper.customTextField(nameController, 'Name',
+              Icons.account_box_outlined, false, context),
           UIhelper.customTextField(
-              emailController, "Email", Icons.email, false, context),
+              emailController, "Email", Icons.email_outlined, false, context),
           UIhelper.customTextField(
               passwordController, "Password", Icons.key, false, context),
 
           UIhelper.customTextField(confirmPasswordController,
               "Confirm password", Icons.key, false, context),
           const SizedBox(height: 30),
-          //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CUSTOM BUTTON
+          //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SIGNUP BUTTON
+
           UIhelper.customButton(() {
             SignUp(
+                nameController.text.toString(),
                 emailController.text.toString(),
                 passwordController.text.toString(),
                 confirmPasswordController.text.toString());
           }, "Sign Up", context),
           const SizedBox(height: 20),
+
+          //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Under Sign Up
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

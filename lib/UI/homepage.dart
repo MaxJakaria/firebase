@@ -1,9 +1,7 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase/Check/chat_card.dart';
+import 'package:firebase/Models/chat_card.dart';
 import 'package:firebase/Models/chat_user.dart';
+import 'package:firebase/UI/login_page.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -15,11 +13,75 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<ChatUser> list = [];
+  TextEditingController searchController = TextEditingController();
+  bool isTextFieldVisible = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          // Search button
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              setState(
+                    () {
+                  isTextFieldVisible = !isTextFieldVisible;
+                },
+              );
+            },
+          ),
+          // Menu button
+          PopupMenuButton<String>(
+            onSelected: (String result) {
+              if (result == 'profile') {
+                // Handle profile action
+                print('Profile clicked');
+              } else if (result == 'logout') {
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> LoginPage()));
+                // Handle logout action
+                print('Logout clicked');
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'profile',
+                child: ListTile(
+                  leading: Icon(Icons.person),
+                  title: Text('Profile'),
+                ),
+              ),
+              const PopupMenuItem<String>(
+                value: 'logout',
+                child: ListTile(
+                  leading: Icon(Icons.logout),
+                  title: Text('Logout'),
+                ),
+              ),
+            ],
+          ),
+        ],
+        // TextField in AppBar
+        bottom: isTextFieldVisible
+            ? PreferredSize(
+          preferredSize: Size.fromHeight(55.0),
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            alignment: Alignment.centerRight,
+            child: TextField(
+              controller: searchController,
+              decoration: InputDecoration(
+                hintText: 'Search...',
+                border: InputBorder.none,
+              ),
+              onChanged: (value) {
+                // Handle text field changes
+              },
+            ),
+          ),
+        )
+            : null,
         title: const Text('Chat'),
       ),
       body: StreamBuilder(
@@ -48,10 +110,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 } else {
                   return Center(
                       child: Text(
-                    'No connections found !',
-                    style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.width * 0.05),
-                  ));
+                        'No connections found !',
+                        style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.05),
+                      ));
                 }
             }
           }),

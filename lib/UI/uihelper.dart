@@ -27,20 +27,23 @@ class UIhelper {
       VoidCallback voidCallback, String text, BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
-    return SizedBox(
-      child: ElevatedButton(
-        onPressed: () {
-          voidCallback();
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blueGrey[600],
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(7),
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: SizedBox(
+        child: ElevatedButton(
+          onPressed: () {
+            voidCallback();
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blueGrey[600],
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(7),
+            ),
           ),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(fontSize: width * 0.05, color: Colors.white),
+          child: Text(
+            text,
+            style: TextStyle(fontSize: width * 0.05, color: Colors.white),
+          ),
         ),
       ),
     );
