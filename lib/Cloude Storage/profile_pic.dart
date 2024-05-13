@@ -78,7 +78,7 @@ class _ProfilePicState extends State<ProfilePic> {
             UIhelper.customButton(() {
               uploadImageToFirebase();
               APIs.creatUser();
-            }, 'Next', context)
+            }, 'Next', Colors.lightGreen,  context)
           ],
         ),
       ),

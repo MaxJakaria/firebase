@@ -72,7 +72,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             ),
             UIhelper.customButton(() {
               forgotPassword(emailController.text.toString());
-            }, 'Reset Password', context),
+            }, 'Reset Password',Colors.lightGreen, context),
           ],
         ),
       ),

@@ -33,6 +33,7 @@ class _ChatCardState extends State<ChatCard> {
               width: mq.height * 0.058,
               height: mq.height * 0.058,
               imageUrl: widget.user.image,
+              fit: BoxFit.cover,
               // placeholder: (context, url)=> CircularProgressIndicator(),
               errorWidget: (context, url, error) => CircleAvatar(
                 child: Icon(CupertinoIcons.person),

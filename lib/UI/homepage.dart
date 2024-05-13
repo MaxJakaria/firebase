@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase/Models/chat_card.dart';
 import 'package:firebase/Models/chat_user.dart';
 import 'package:firebase/UI/login_page.dart';
+import 'package:firebase/UI/profile_screen.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -45,9 +46,17 @@ class _MyHomePageState extends State<MyHomePage> {
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
+               PopupMenuItem<String>(
                 value: 'profile',
                 child: ListTile(
+                  onTap: () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => profileScreen(user: list[0])),
+                          (route) => false, // This predicate disables popping any routes from the stack.
+                    );
+                  },
+
                   leading: Icon(Icons.person),
                   title: Text('Profile'),
                 ),

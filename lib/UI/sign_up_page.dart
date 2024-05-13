@@ -91,7 +91,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 emailController.text.toString(),
                 passwordController.text.toString(),
                 confirmPasswordController.text.toString());
-          }, "Sign Up", context),
+          }, "Sign Up",Colors.lightGreen, context),
           const SizedBox(height: 20),
 
           //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Under Sign Up
@@ -104,12 +104,10 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginPage(),
-                    ),
-                  );
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                      (route) => false);
                 },
                 child: Text(
                   'Login',

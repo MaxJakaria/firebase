@@ -24,7 +24,7 @@ class UIhelper {
   }
 
   static customButton(
-      VoidCallback voidCallback, String text, BuildContext context) {
+      VoidCallback voidCallback, String text,Color buttonColor, BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
     return Padding(
@@ -35,7 +35,7 @@ class UIhelper {
             voidCallback();
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blueGrey[600],
+            backgroundColor: buttonColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(7),
             ),
@@ -72,6 +72,28 @@ class UIhelper {
           ],
         );
       },
+    );
+  }
+
+  static textField( IconData iconData,
+      String text, String levelText, String hintText, BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
+    return TextFormField(
+      style: TextStyle(
+        fontSize: width * 0.04,
+        color: Colors.black,
+        // fontStyle: FontStyle.italic,
+      ),
+      initialValue: text,
+      decoration: InputDecoration(
+        prefixIcon: Icon(iconData, color: Colors.blueAccent,),
+        border: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.amber),
+            borderRadius: BorderRadius.circular(12)),
+        hintText: hintText,
+        label: Text(levelText),
+      ),
     );
   }
 }
