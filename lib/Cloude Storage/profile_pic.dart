@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfilePic extends StatefulWidget {
-  const ProfilePic({Key? key});
+  const ProfilePic({super.key});
 
   @override
   State<ProfilePic> createState() => _ProfilePicState();
@@ -67,7 +67,7 @@ class _ProfilePicState extends State<ProfilePic> {
                       radius: 140,
                       backgroundImage: FileImage(pickedImage!),
                     )
-                  : CircleAvatar(
+                  : const CircleAvatar(
                       radius: 140,
                       child: Icon(
                         Icons.image,
@@ -103,6 +103,9 @@ class _ProfilePicState extends State<ProfilePic> {
     try {
       if (pickedImage == null) return;
 
+      showDialog(context: context, builder: (_)=> Center(child: CircularProgressIndicator(),));
+
+
       // Upload image to Firebase Storage
       Reference ref = FirebaseStorage.instance
           .ref()
@@ -119,7 +122,9 @@ class _ProfilePicState extends State<ProfilePic> {
         'image': downloadUrl,
       });
 
-      // Navigate to the next screen
+
+
+      Navigator.pop(context);      // Navigate to the next screen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

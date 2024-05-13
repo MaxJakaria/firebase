@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase/Models/chat_user.dart';
 import 'package:firebase/UI/homepage.dart';
-import 'package:firebase/UI/login_page.dart';
 import 'package:firebase/UI/uihelper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +15,7 @@ class profileScreen extends StatefulWidget {
 }
 
 class _profileScreenState extends State<profileScreen> {
-  TextEditingController _nameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +24,10 @@ class _profileScreenState extends State<profileScreen> {
         // leading: Icon(Icons.home),
         title: IconButton(
           onPressed: () {
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => MyHomePage()));
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const MyHomePage()));
           },
-          icon: Icon(Icons.home),
+          icon: const Icon(Icons.home),
         ),
       ),
       body: Padding(
@@ -46,7 +45,7 @@ class _profileScreenState extends State<profileScreen> {
                 height: MediaQuery.of(context).size.height * 0.2,
                 imageUrl: widget.user.image,
                 fit: BoxFit.cover,
-                errorWidget: (context, url, error) => CircleAvatar(
+                errorWidget: (context, url, error) => const CircleAvatar(
                   child: Icon(CupertinoIcons.person),
                 ),
               ),
@@ -60,25 +59,25 @@ class _profileScreenState extends State<profileScreen> {
               ),
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-            UIhelper.textField( Icons.drive_file_rename_outline,
+            UIhelper.textField(
+              Icons.drive_file_rename_outline,
               widget.user.name,
               'Name',
               'eg. Abdullah',
               context,
             ),
-
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-            UIhelper.textField(Icons.description,
+            UIhelper.textField(
+              Icons.description,
               widget.user.about,
               'About',
               'eg. Feeling Happy !',
               context,
             ),
-
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            UIhelper.customButton(() async {
 
-            UIhelper.customButton(() { }, 'Log Out', Colors.deepPurpleAccent, context),
-
+            }, 'Update', Colors.lightGreen, context),
           ],
         ),
       ),

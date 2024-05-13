@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             );
       } on FirebaseException catch (ex) {
-        return UIhelper.customAlertBox(context, ex.code.toString());
+        return UIhelper.customAlertBox(context, 'Wrong Information !');
       }
     }
   }
@@ -58,9 +58,11 @@ class _LoginPageState extends State<LoginPage> {
 
           //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> LOGIN BUTTON
           UIhelper.customButton(() {
-            LogIn(emailController.text.toString(),
-                passwordController.text.toString());
-          }, "Login",Colors.lightGreen, context),
+            LogIn(
+              emailController.text.toString(),
+              passwordController.text.toString(),
+            );
+          }, "Login", Colors.lightGreen, context),
 
           const SizedBox(
             height: 5,

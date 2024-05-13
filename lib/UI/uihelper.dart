@@ -89,7 +89,7 @@ class UIhelper {
       decoration: InputDecoration(
         prefixIcon: Icon(iconData, color: Colors.blueAccent,),
         border: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.amber),
+            borderSide: const BorderSide(color: Colors.amber),
             borderRadius: BorderRadius.circular(12)),
         hintText: hintText,
         label: Text(levelText),

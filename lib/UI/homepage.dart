@@ -3,6 +3,7 @@ import 'package:firebase/Models/chat_card.dart';
 import 'package:firebase/Models/chat_user.dart';
 import 'package:firebase/UI/login_page.dart';
 import 'package:firebase/UI/profile_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -24,10 +25,10 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           // Search button
           IconButton(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
             onPressed: () {
               setState(
-                    () {
+                () {
                   isTextFieldVisible = !isTextFieldVisible;
                 },
               );
@@ -35,30 +36,37 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           // Menu button
           PopupMenuButton<String>(
-            onSelected: (String result) {
+            onSelected: (String result) async {
               if (result == 'profile') {
-                // Handle profile action
-                print('Profile clicked');
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => profileScreen(user: list[0])),
+                  (route) => false,
+                );
               } else if (result == 'logout') {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> LoginPage()));
-                // Handle logout action
-                print('Logout clicked');
+                showDialog(
+                  context: context,
+                  builder: (_) => Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+                await FirebaseAuth.instance.signOut().then(
+                      (value) => Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ),
+                      ),
+                    );
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-               PopupMenuItem<String>(
+              PopupMenuItem<String>(
                 value: 'profile',
                 child: ListTile(
-                  onTap: () {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => profileScreen(user: list[0])),
-                          (route) => false, // This predicate disables popping any routes from the stack.
-                    );
-                  },
-
-                  leading: Icon(Icons.person),
-                  title: Text('Profile'),
+                  leading: const Icon(Icons.person),
+                  title: const Text('Profile'),
                 ),
               ),
               const PopupMenuItem<String>(
@@ -74,22 +82,22 @@ class _MyHomePageState extends State<MyHomePage> {
         // TextField in AppBar
         bottom: isTextFieldVisible
             ? PreferredSize(
-          preferredSize: Size.fromHeight(55.0),
-          child: Container(
-            padding: EdgeInsets.all(16.0),
-            alignment: Alignment.centerRight,
-            child: TextField(
-              controller: searchController,
-              decoration: InputDecoration(
-                hintText: 'Search...',
-                border: InputBorder.none,
-              ),
-              onChanged: (value) {
-                // Handle text field changes
-              },
-            ),
-          ),
-        )
+                preferredSize: const Size.fromHeight(55.0),
+                child: Container(
+                  padding: const EdgeInsets.all(16.0),
+                  alignment: Alignment.centerRight,
+                  child: TextField(
+                    controller: searchController,
+                    decoration: const InputDecoration(
+                      hintText: 'Search...',
+                      border: InputBorder.none,
+                    ),
+                    onChanged: (value) {
+                      // Handle text field changes
+                    },
+                  ),
+                ),
+              )
             : null,
         title: const Text('Chat'),
       ),
@@ -119,10 +127,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 } else {
                   return Center(
                       child: Text(
-                        'No connections found !',
-                        style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.05),
-                      ));
+                    'No connections found !',
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.05),
+                  ));
                 }
             }
           }),

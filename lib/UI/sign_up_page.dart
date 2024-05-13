@@ -3,6 +3,7 @@ import 'package:firebase/Cloude%20Storage/profile_pic.dart';
 import 'package:firebase/UI/login_page.dart';
 import 'package:firebase/UI/uihelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -29,25 +30,15 @@ class _SignUpPageState extends State<SignUpPage> {
     } else {
       try {
         // Create user in Firebase Authentication
-        UserCredential userCredential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+
+        showDialog(context: context, builder: (_)=> Center(child: CircularProgressIndicator()));
+
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email,
           password: password,
         );
 
-        // Get the user's UID
-        final uid = userCredential.user!.uid;
-
-        // Save name and email to Firestore
-        await FirebaseFirestore.instance
-            .collection('user')
-            .doc(uid.toString())
-            .set({
-          'name': name,
-          'email': email,
-          // Add more fields if needed
-        });
-
+        Navigator.pop(context);
         // Navigate to the next screen after successful sign-up
         Navigator.pushReplacement(
           context,
@@ -56,7 +47,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         );
       } on FirebaseAuthException catch (ex) {
-        UIhelper.customAlertBox(context, ex.code.toString());
+        UIhelper.customAlertBox(context, 'Something wrong !');
       }
     }
   }
@@ -91,7 +82,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 emailController.text.toString(),
                 passwordController.text.toString(),
                 confirmPasswordController.text.toString());
-          }, "Sign Up",Colors.lightGreen, context),
+          }, "Sign Up", Colors.lightGreen, context),
           const SizedBox(height: 20),
 
           //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Under Sign Up
@@ -106,7 +97,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 onPressed: () {
                   Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()),
                       (route) => false);
                 },
                 child: Text(
