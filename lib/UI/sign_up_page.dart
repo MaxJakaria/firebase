@@ -3,7 +3,6 @@ import 'package:firebase/Cloude%20Storage/profile_pic.dart';
 import 'package:firebase/UI/login_page.dart';
 import 'package:firebase/UI/uihelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -29,16 +28,36 @@ class _SignUpPageState extends State<SignUpPage> {
       UIhelper.customAlertBox(context, "Passwords are not the same !");
     } else {
       try {
-        // Create user in Firebase Authentication
+        //___________________________________________________________ Create user in Firebase Authentication
 
-        showDialog(context: context, builder: (_)=> Center(child: CircularProgressIndicator()));
-
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        UserCredential? userCredential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email,
           password: password,
         );
 
+        //Show Dialog
+        showDialog(
+          context: context,
+          builder: (_) => const Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+
+        //______________________________________________________________ Set data to Firebase firestore
+        FirebaseFirestore.instance
+            .collection('user')
+            .doc(userCredential.user!.email)
+            .set({
+          'name': name,
+          'email': email,
+          'about': "I'm using IslamicMedea !",
+        });
+
+        //Remove Dialog
         Navigator.pop(context);
+
+
         // Navigate to the next screen after successful sign-up
         Navigator.pushReplacement(
           context,
@@ -46,7 +65,7 @@ class _SignUpPageState extends State<SignUpPage> {
             builder: (context) => const ProfilePic(),
           ),
         );
-      } on FirebaseAuthException catch (ex) {
+      } on FirebaseAuthException {
         UIhelper.customAlertBox(context, 'Something wrong !');
       }
     }

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:firebase/API/apis.dart';
 import 'package:firebase/UI/homepage.dart';
 import 'package:firebase/UI/uihelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -77,8 +76,7 @@ class _ProfilePicState extends State<ProfilePic> {
             ),
             UIhelper.customButton(() {
               uploadImageToFirebase();
-              APIs.creatUser();
-            }, 'Next', Colors.lightGreen,  context)
+            }, 'Next', Colors.lightGreen, context)
           ],
         ),
       ),
@@ -103,28 +101,31 @@ class _ProfilePicState extends State<ProfilePic> {
     try {
       if (pickedImage == null) return;
 
-      showDialog(context: context, builder: (_)=> Center(child: CircularProgressIndicator(),));
+      showDialog(
+          context: context,
+          builder: (_) => const Center(
+                child: CircularProgressIndicator(),
+              ));
 
-
-      // Upload image to Firebase Storage
+      //____________________________________________________ Upload image to Firebase Storage
       Reference ref = FirebaseStorage.instance
           .ref()
-          .child('image/${FirebaseAuth.instance.currentUser!.uid}');
+          .child('image/${FirebaseAuth.instance.currentUser!.email}');
       UploadTask uploadTask = ref.putFile(pickedImage!);
       TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
 
-      // Get download URL of the uploaded image
+      // _______________________________________________________________________ Get download URL of the uploaded image
       String downloadUrl = await taskSnapshot.ref.getDownloadURL();
 
-      // Save the download URL to Firestore
-      String uid = FirebaseAuth.instance.currentUser!.uid;
-      await FirebaseFirestore.instance.collection('user').doc(uid).update({
+      // _______________________________________________________________________ Add image section into Firebase Doc
+      await FirebaseFirestore.instance
+          .collection('user')
+          .doc(FirebaseAuth.instance.currentUser!.email)
+          .set({
         'image': downloadUrl,
-      });
+      }, SetOptions(merge: true));
 
-
-
-      Navigator.pop(context);      // Navigate to the next screen
+      Navigator.pop(context); // Navigate to the next screen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

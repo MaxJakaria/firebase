@@ -47,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
               } else if (result == 'logout') {
                 showDialog(
                   context: context,
-                  builder: (_) => Center(
+                  builder: (_) => const Center(
                     child: CircularProgressIndicator(),
                   ),
                 );
@@ -62,11 +62,11 @@ class _MyHomePageState extends State<MyHomePage> {
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              PopupMenuItem<String>(
+              const PopupMenuItem<String>(
                 value: 'profile',
                 child: ListTile(
-                  leading: const Icon(Icons.person),
-                  title: const Text('Profile'),
+                  leading: Icon(Icons.person),
+                  title: Text('Profile'),
                 ),
               ),
               const PopupMenuItem<String>(

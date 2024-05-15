@@ -33,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             );
-      } on FirebaseException catch (ex) {
+      } on FirebaseException {
         return UIhelper.customAlertBox(context, 'Wrong Information !');
       }
     }
