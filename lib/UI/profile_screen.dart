@@ -34,51 +34,68 @@ class _profileScreenState extends State<profileScreen> {
         padding: EdgeInsets.symmetric(
           horizontal: MediaQuery.of(context).size.width * 0.02,
         ),
-        child: Column(
-          children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(
-                  MediaQuery.of(context).size.height * 0.1),
-              child: CachedNetworkImage(
-                width: MediaQuery.of(context).size.height * 0.2,
-                height: MediaQuery.of(context).size.height * 0.2,
-                imageUrl: widget.user.image,
-                fit: BoxFit.cover,
-                errorWidget: (context, url, error) => const CircleAvatar(
-                  child: Icon(CupertinoIcons.person),
+
+        //_____________________________________________________________________Column with scroll view
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+
+              //_________________________________________________________Stack for Profile picture
+              Stack(children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(
+                      MediaQuery.of(context).size.height * 0.1),
+                  child: CachedNetworkImage(
+                    width: MediaQuery.of(context).size.height * 0.2,
+                    height: MediaQuery.of(context).size.height * 0.2,
+                    imageUrl: widget.user.image,
+                    fit: BoxFit.cover,
+                    errorWidget: (context, url, error) => const CircleAvatar(
+                      child: Icon(CupertinoIcons.person),
+                    ),
+                  ),
+                ),
+                
+                Positioned(
+                  bottom: 4,
+                  right: 0,
+                  child: MaterialButton(onPressed: (){},
+                    elevation: 0.01,
+                    shape: CircleBorder(),
+                    color: Colors.transparent,
+                    child: Icon(Icons.edit,color: Colors.white,),),
+                )
+              ]),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+              Text(
+                widget.user.email,
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: MediaQuery.of(context).size.width * 0.04,
                 ),
               ),
-            ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-            Text(
-              widget.user.email,
-              style: TextStyle(
-                color: Colors.black54,
-                fontSize: MediaQuery.of(context).size.width * 0.04,
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+              UIhelper.textField(
+                Icons.drive_file_rename_outline,
+                widget.user.name,
+                'Name',
+                'eg. Abdullah',
+                context,
               ),
-            ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-            UIhelper.textField(
-              Icons.drive_file_rename_outline,
-              widget.user.name,
-              'Name',
-              'eg. Abdullah',
-              context,
-            ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-            UIhelper.textField(
-              Icons.description,
-              widget.user.about,
-              'About',
-              'eg. Feeling Happy !',
-              context,
-            ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-            UIhelper.customButton(() async {
-
-            }, 'Update', Colors.lightGreen, context),
-          ],
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+              UIhelper.textField(
+                Icons.description,
+                widget.user.about,
+                'About',
+                'eg. Feeling Happy !',
+                context,
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+              UIhelper.customButton(
+                  () async {}, 'Update', Colors.lightGreen, context),
+            ],
+          ),
         ),
       ),
     );
