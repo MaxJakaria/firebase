@@ -5,10 +5,10 @@ class ChatUser {
     required this.about,
     required this.email,
   });
-  late final String image;
-  late final String name;
-  late final String about;
-  late final String email;
+  late  String image;
+  late  String name;
+  late  String about;
+  late  String email;
 
   ChatUser.fromJson(Map<String, dynamic> json){
     image = json['image'] ?? '';

@@ -51,7 +51,7 @@ class _SignUpPageState extends State<SignUpPage> {
             .set({
           'name': name,
           'email': email,
-          'about': "I'm using IslamicMedea !",
+          'about': "I'm using IslamicMedia !",
         });
 
         //Remove Dialog
