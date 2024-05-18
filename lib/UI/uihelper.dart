@@ -55,9 +55,11 @@ class UIhelper {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          backgroundColor: Colors.black54,
           title: Text(
             text,
-            style: const TextStyle(color: Colors.blueGrey),
+            style: TextStyle(color: Colors.white, fontSize: width * 0.05),
           ),
           actions: [
             TextButton(

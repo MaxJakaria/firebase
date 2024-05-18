@@ -18,12 +18,13 @@ class _ChatCardState extends State<ChatCard> {
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context).size;
 
-    return InkWell(
-      onTap: () {},
-      child: Card(
-        margin: EdgeInsets.symmetric(horizontal: mq.width * 0.01, vertical: 4),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        elevation: 0.5,
+    return Card(
+      color: Color(0xffDBD9BC),
+      margin: EdgeInsets.symmetric(horizontal: mq.width * 0.015, vertical: 4),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      elevation: 0.5,
+      child: InkWell(
+        onTap: () {},
         child: ListTile(
           // user profile picture
           // leading: const CircleAvatar(child: Icon(CupertinoIcons.person),),
@@ -40,7 +41,7 @@ class _ChatCardState extends State<ChatCard> {
               ),
             ),
           ),
-          title: Text(widget.user.name),
+          title: Text(widget.user.name, style: TextStyle(fontWeight: FontWeight.bold),),
           subtitle: Text(
             widget.user.about,
             maxLines: 1,
