@@ -4,6 +4,7 @@ import 'package:firebase/UI/login_page.dart';
 import 'package:firebase/UI/uihelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -57,7 +58,6 @@ class _SignUpPageState extends State<SignUpPage> {
         //Remove Dialog
         Navigator.pop(context);
 
-
         // Navigate to the next screen after successful sign-up
         Navigator.pushReplacement(
           context,
@@ -75,62 +75,92 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign Up Page'),
-        centerTitle: true,
-      ),
-      body: ListView(
-        children: [
-          //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Text Fields
-          UIhelper.customTextField(nameController, 'Name',
-              Icons.account_box_outlined, false, context),
-          UIhelper.customTextField(
-              emailController, "Email", Icons.email_outlined, false, context),
-          UIhelper.customTextField(
-              passwordController, "Password", Icons.key, false, context),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Container(
+        //___________________________________________________________________Background image
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('images/background.jpg'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          //_______________________________________________________________AppBar
+          appBar: AppBar(
+            backgroundColor: Colors.blueGrey[200],
+            title: Text(
+              'Signup Page',
+              style: GoogleFonts.acme(),
+            ),
+            centerTitle: true,
+          ),
+          body: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Padding(
+              padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.height * 0.05),
+              child: Column(
+                // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Text Fields
+                  UIhelper.customTextField(nameController, 'Name',
+                      Icons.account_box_outlined, false, context),
+                  UIhelper.customTextField(emailController, "Email",
+                      Icons.email_outlined, false, context),
+                  UIhelper.customTextField(passwordController, "Password",
+                      Icons.key, false, context),
 
-          UIhelper.customTextField(confirmPasswordController,
-              "Confirm password", Icons.key, false, context),
-          const SizedBox(height: 30),
-          //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SIGNUP BUTTON
+                  UIhelper.customTextField(confirmPasswordController,
+                      "Confirm password", Icons.key, false, context),
+                  const SizedBox(height: 30),
+                  //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SIGNUP BUTTON
 
-          UIhelper.customButton(() {
-            SignUp(
-                nameController.text.toString(),
-                emailController.text.toString(),
-                passwordController.text.toString(),
-                confirmPasswordController.text.toString());
-          }, "Sign Up", Colors.lightGreen, context),
-          const SizedBox(height: 20),
+                  UIhelper.customButton(() {
+                    SignUp(
+                        nameController.text.toString(),
+                        emailController.text.toString(),
+                        passwordController.text.toString(),
+                        confirmPasswordController.text.toString());
+                  }, "Sign Up", Colors.lightGreen, context),
 
-          //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Under Sign Up
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Already have an account?",
-                style: TextStyle(fontSize: width * 0.04, color: Colors.black54),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+
+                  //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Under Sign Up
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Already have an account?",
+                        style: TextStyle(
+                            fontSize: width * 0.04, color: Colors.black54),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const LoginPage()),
+                              (route) => false);
+                        },
+                        child: Text(
+                          'Login',
+                          style: TextStyle(
+                              fontSize: width * 0.04,
+                              color: Colors.blueAccent,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
               ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const LoginPage()),
-                      (route) => false);
-                },
-                child: Text(
-                  'Login',
-                  style: TextStyle(
-                      fontSize: width * 0.04,
-                      color: Colors.blueAccent,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          )
-        ],
+            ),
+          ),
+        ),
       ),
     );
   }

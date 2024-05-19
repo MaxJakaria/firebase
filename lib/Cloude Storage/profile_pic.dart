@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfilePic extends StatefulWidget {
@@ -18,12 +19,16 @@ class ProfilePic extends StatefulWidget {
 class _ProfilePicState extends State<ProfilePic> {
   File? pickedImage;
 
+  //____________________________________________________________________Box for pic image
   showAlertBox() {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Pick image from'),
+          title: Text(
+            'Pick image from',
+            style: GoogleFonts.italiana(fontWeight: FontWeight.bold),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -50,34 +55,47 @@ class _ProfilePicState extends State<ProfilePic> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.18),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            InkWell(
-              onTap: () {
-                showAlertBox();
-              },
-              child: pickedImage != null
-                  ? CircleAvatar(
-                      radius: 140,
-                      backgroundImage: FileImage(pickedImage!),
-                    )
-                  : const CircleAvatar(
-                      radius: 140,
-                      child: Icon(
-                        Icons.image,
-                        size: 140,
+    //____________________________________________________ Background Image
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('images/b1.jpg'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.18),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              //________________________________________________________________ Image Box
+              InkWell(
+                onTap: () {
+                  showAlertBox();
+                },
+                child: pickedImage != null
+                    ? CircleAvatar(
+                        radius: 140,
+                        backgroundImage: FileImage(pickedImage!),
+                      )
+                    : const CircleAvatar(
+                        radius: 140,
+                        child: Icon(
+                          Icons.image,
+                          size: 140,
+                        ),
                       ),
-                    ),
-            ),
-            UIhelper.customButton(() {
-              uploadImageToFirebase();
-            }, 'Next', Colors.lightGreen, context)
-          ],
+              ),
+
+              //________________________________________________________________ Next Button
+              UIhelper.customButton(() {
+                uploadImageToFirebase();
+              }, 'Next', Colors.lightGreen, context)
+            ],
+          ),
         ),
       ),
     );
@@ -102,10 +120,11 @@ class _ProfilePicState extends State<ProfilePic> {
       if (pickedImage == null) return;
 
       showDialog(
-          context: context,
-          builder: (_) => const Center(
-                child: CircularProgressIndicator(),
-              ));
+        context: context,
+        builder: (_) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
 
       //____________________________________________________ Upload image to Firebase Storage
       Reference ref = FirebaseStorage.instance

@@ -4,6 +4,7 @@ import 'package:firebase/UI/sign_up_page.dart';
 import 'package:firebase/UI/uihelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -43,74 +44,98 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login Page'),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          UIhelper.customTextField(
-              emailController, "Email", Icons.email, false, context),
-          UIhelper.customTextField(
-              passwordController, "Password", Icons.key, false, context),
-          const SizedBox(height: 30),
-
-          //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> LOGIN BUTTON
-          UIhelper.customButton(() {
-            LogIn(
-              emailController.text.toString(),
-              passwordController.text.toString(),
-            );
-          }, "Login", Colors.lightGreen, context),
-
-          const SizedBox(
-            height: 5,
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Container(
+        //______________________________________________________________________Background image
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('images/background.jpg'),
+            fit: BoxFit.cover,
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ForgotPassword(),
-                ),
-              );
-            },
-            child: Text(
-              'Forgotten Password?',
-              style:
-                  TextStyle(fontSize: width * 0.04, color: Colors.blueAccent),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          //____________________________________________________________________AppBar
+          appBar: AppBar(
+            backgroundColor: Colors.blueGrey[200],
+            title: Text(
+              'Login Page',
+              style: GoogleFonts.acme(),
             ),
+            centerTitle: true,
           ),
 
-          const SizedBox(height: 20),
-          Row(
+          //____________________________________________________________________Body
+          body: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "Don't have any account?",
-                style: TextStyle(fontSize: width * 0.04, color: Colors.black54),
+              UIhelper.customTextField(
+                  emailController, "Email", Icons.email, false, context),
+              UIhelper.customTextField(
+                  passwordController, "Password", Icons.key, false, context),
+              const SizedBox(height: 30),
+
+              //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> LOGIN BUTTON
+              UIhelper.customButton(() {
+                LogIn(
+                  emailController.text.toString(),
+                  passwordController.text.toString(),
+                );
+              }, "Login", Colors.lightGreen, context),
+
+              const SizedBox(
+                height: 5,
               ),
               TextButton(
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const SignUpPage(),
+                      builder: (context) => const ForgotPassword(),
                     ),
                   );
                 },
                 child: Text(
-                  'Sign-up',
+                  'Forgotten Password?',
                   style: TextStyle(
-                      fontSize: width * 0.04,
-                      color: Colors.blueAccent,
-                      fontWeight: FontWeight.bold),
+                      fontSize: width * 0.04, color: Colors.blueAccent),
                 ),
+              ),
+
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Don't have any account?",
+                    style: TextStyle(
+                        fontSize: width * 0.04, color: Colors.black54),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SignUpPage(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'Sign-up',
+                      style: TextStyle(
+                          fontSize: width * 0.04,
+                          color: Colors.blueAccent,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
