@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase/Models/chat_card.dart';
 import 'package:firebase/Models/chat_user.dart';
-import 'package:firebase/UI/login_page.dart';
-import 'package:firebase/UI/profile_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase/UI/pop_up_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -86,7 +85,14 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                     ),
                   )
-                : Text('Chat'),
+                : Padding(
+                    padding: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.02),
+                    child: Text(
+                      'Chats',
+                      style: GoogleFonts.acme(color: Colors.lightGreen[700]),
+                    ),
+                  ),
             actions: [
               //________________________________________________________________________Search button
               IconButton(
@@ -100,57 +106,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 icon: Icon(
                     _isSearching ? CupertinoIcons.clear_circled : Icons.search),
               ),
-              // Menu button
-              PopupMenuButton<String>(
-                onSelected: (String result) async {
-                  if (result == 'profile') {
-                    //_________________________________________________________________________ Call list Current user to profile screen
-
-                    // Find the index of the current user in the list
-                    int currentUserIndex = list.indexWhere((user) =>
-                        user.email == FirebaseAuth.instance.currentUser!.email);
-
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              profileScreen(user: list[currentUserIndex])),
-                      (route) => false,
-                    );
-                  } else if (result == 'logout') {
-                    showDialog(
-                      context: context,
-                      builder: (_) => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                    await FirebaseAuth.instance.signOut().then(
-                          (value) => Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const LoginPage(),
-                            ),
-                          ),
-                        );
-                  }
-                },
-                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                  const PopupMenuItem<String>(
-                    value: 'profile',
-                    child: ListTile(
-                      leading: Icon(Icons.person),
-                      title: Text('Profile'),
-                    ),
-                  ),
-                  const PopupMenuItem<String>(
-                    value: 'logout',
-                    child: ListTile(
-                      leading: Icon(Icons.logout),
-                      title: Text('Logout'),
-                    ),
-                  ),
-                ],
-              ),
+              //____________________________________________________________________________ PopUpMenu button
+              CustomPopupMenuButton(userList: list),
             ],
           ),
 
