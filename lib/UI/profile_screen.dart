@@ -6,6 +6,7 @@ import 'package:firebase/UI/uihelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class profileScreen extends StatefulWidget {
   final ChatUser user;
@@ -17,8 +18,6 @@ class profileScreen extends StatefulWidget {
 }
 
 class _profileScreenState extends State<profileScreen> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _aboutController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -139,17 +138,18 @@ class _profileScreenState extends State<profileScreen> {
 
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
 
-                  //___________________________________________________________________Update button
+                  //_____________________________________________________________________________________Update button
                   UIhelper.customButton(() async {
-
+                    final width = MediaQuery.of(context).size.width;
                     if(_formKey.currentState !.validate()){
                       _formKey.currentState!.save();
                       await FirebaseFirestore.instance.collection('user').doc(widget.user.email).update({
                         'name' : widget.user.name,
                         'about': widget.user.about,
                       });
-
+                      UIhelper.customAlertBox(context, 'Update successful...');
                       print(FirebaseAuth.instance.currentUser!.email.toString());
+
                     }
 
                   }, 'Update', Colors.lightGreen, context),

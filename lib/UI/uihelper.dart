@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class UIhelper {
   static customTextField(TextEditingController controller, String text,
@@ -59,7 +60,7 @@ class UIhelper {
           backgroundColor: Colors.black54,
           title: Text(
             text,
-            style: TextStyle(color: Colors.white, fontSize: width * 0.05),
+            style: GoogleFonts.acme(color: Colors.white, fontSize: width * 0.05),
           ),
           actions: [
             TextButton(

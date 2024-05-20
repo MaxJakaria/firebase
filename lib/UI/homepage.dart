@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase/Models/chat_card.dart';
 import 'package:firebase/Models/chat_user.dart';
-import 'package:firebase/UI/pop_up_menu.dart';
+import 'package:firebase/UI/login_page.dart';
+import 'package:firebase/UI/profile_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -54,51 +56,44 @@ class _MyHomePageState extends State<MyHomePage> {
             //____________________________________________________________________ Search Text field and Conditions
             title: _isSearching
                 ? Padding(
-                    padding: EdgeInsets.only(left: mq.width * 0.04),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'eg. name, email',
-                      ),
-                      autofocus: true,
-                      style: TextStyle(
-                          fontSize: mq.width * 0.045,
-                          letterSpacing: mq.width * 0.0025),
+              padding: EdgeInsets.only(left: mq.width * 0.04),
+              child: TextField(
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'eg. name, email',
+                ),
+                autofocus: true,
+                style: TextStyle(
+                    fontSize: mq.width * 0.045,
+                    letterSpacing: mq.width * 0.0025),
 
-                      //When search changes then update search list
-                      onChanged: (val) {
-                        //______________________________________________________Search Logic
-                        _searchList.clear();
-                        for (var i in list) {
-                          if (i.name
-                                  .toLowerCase()
-                                  .contains(val.toLowerCase()) ||
-                              i.email
-                                  .toLowerCase()
-                                  .contains(val.toLowerCase())) {
-                            _searchList.add(i);
-                          }
-                          setState(() {
-                            _searchList;
-                          });
-                        }
-                      },
-                    ),
-                  )
-                : Padding(
-                    padding: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.02),
-                    child: Text(
-                      'Chats',
-                      style: GoogleFonts.acme(color: Colors.lightGreen[700]),
-                    ),
-                  ),
+                //When search changes then update search list
+                onChanged: (val) {
+                  //______________________________________________________Search Logic
+                  _searchList.clear();
+                  for (var i in list) {
+                    if (i.name
+                        .toLowerCase()
+                        .contains(val.toLowerCase()) ||
+                        i.email
+                            .toLowerCase()
+                            .contains(val.toLowerCase())) {
+                      _searchList.add(i);
+                    }
+                    setState(() {
+                      _searchList;
+                    });
+                  }
+                },
+              ),
+            )
+                : Text('Chat',style: GoogleFonts.acme(),),
             actions: [
               //________________________________________________________________________Search button
               IconButton(
                 onPressed: () {
                   setState(
-                    () {
+                        () {
                       _isSearching = !_isSearching;
                     },
                   );
@@ -106,8 +101,63 @@ class _MyHomePageState extends State<MyHomePage> {
                 icon: Icon(
                     _isSearching ? CupertinoIcons.clear_circled : Icons.search),
               ),
-              //____________________________________________________________________________ PopUpMenu button
-              CustomPopupMenuButton(userList: list),
+              //_______________________________________________________________________________________PopupMenu button
+              PopupMenuButton<String>(
+                color: Colors.blueGrey[100],
+                shape: ContinuousRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(mq.width * 1.0),
+                        topLeft: Radius.circular(mq.width * 1.0),
+                        bottomRight: Radius.circular(mq.width * 5.0))),
+                onSelected: (String result) async {
+                  if (result == 'profile') {
+                    //_________________________________________________________________________ Call list Current user to profile screen
+
+                    // Find the index of the current user in the list
+                    int currentUserIndex = list.indexWhere((user) =>
+                    user.email == FirebaseAuth.instance.currentUser!.email);
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              profileScreen(user: list[currentUserIndex])),
+
+                    );
+                  } else if (result == 'logout') {
+                    showDialog(
+                      context: context,
+                      builder: (_) => const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                    await FirebaseAuth.instance.signOut().then(
+                          (value) => Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ),
+                      ),
+                    );
+                  }
+                },
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  const PopupMenuItem<String>(
+                    value: 'profile',
+                    child: ListTile(
+                      leading: Icon(Icons.person),
+                      title: Text('Profile'),
+                    ),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: 'logout',
+                    child: ListTile(
+                      leading: Icon(Icons.logout),
+                      title: Text('Logout'),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
 
@@ -131,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   if (list.isNotEmpty) {
                     return ListView.builder(
                       itemCount:
-                          _isSearching ? _searchList.length : list.length,
+                      _isSearching ? _searchList.length : list.length,
                       physics: const BouncingScrollPhysics(),
                       itemBuilder: (context, index) {
                         return ChatCard(
@@ -143,10 +193,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   } else {
                     return Center(
                         child: Text(
-                      'No connections found !',
-                      style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.05),
-                    ));
+                          'No connections found !',
+                          style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.width * 0.05),
+                        ));
                   }
               }
             },
