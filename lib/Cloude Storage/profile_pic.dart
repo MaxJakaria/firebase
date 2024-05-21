@@ -25,9 +25,10 @@ class _ProfilePicState extends State<ProfilePic> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Color(0xff2d2d30),
           title: Text(
             'Pick image from',
-            style: GoogleFonts.italiana(fontWeight: FontWeight.bold),
+            style: GoogleFonts.italiana(fontWeight: FontWeight.bold, color: Colors.white),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -35,16 +36,18 @@ class _ProfilePicState extends State<ProfilePic> {
               ListTile(
                 onTap: () {
                   pickImage(ImageSource.camera);
+                  Navigator.pop(context);
                 },
-                leading: const Icon(Icons.camera),
-                title: const Text('Camera'),
+                leading: const Icon(Icons.camera, color: Colors.blueAccent,),
+                title:  Text('Camera',style: GoogleFonts.acme(color: Colors.white, fontSize: MediaQuery.of(context).size.width *0.04),),
               ),
               ListTile(
                 onTap: () {
                   pickImage(ImageSource.gallery);
+                  Navigator.pop(context);
                 },
-                leading: const Icon(Icons.image_outlined),
-                title: const Text('Gallery'),
+                leading: const Icon(Icons.image_outlined, color: Colors.blueAccent,),
+                title: Text('Gallery',style: GoogleFonts.acme(color: Colors.white, fontSize: MediaQuery.of(context).size.width *0.04),),
               )
             ],
           ),
