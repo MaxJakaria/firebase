@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
       },
       child: Container(
         //______________________________________________________________________Background image
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('images/background.jpg'),
             fit: BoxFit.cover,

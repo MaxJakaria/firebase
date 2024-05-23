@@ -19,7 +19,7 @@ class _ChatCardState extends State<ChatCard> {
     final mq = MediaQuery.of(context).size;
 
     return Card(
-      color: Color(0xffDBD9BC),
+      color: const Color(0xffDBD9BC),
       margin: EdgeInsets.symmetric(horizontal: mq.width * 0.015, vertical: 4),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 0.5,
@@ -41,7 +41,7 @@ class _ChatCardState extends State<ChatCard> {
               ),
             ),
           ),
-          title: Text(widget.user.name, style: TextStyle(fontWeight: FontWeight.bold),),
+          title: Text(widget.user.name, style: const TextStyle(fontWeight: FontWeight.bold),),
           subtitle: Text(
             widget.user.about,
             maxLines: 1,

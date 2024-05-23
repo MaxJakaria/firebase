@@ -25,7 +25,7 @@ class _ProfilePicState extends State<ProfilePic> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Color(0xff2d2d30),
+          backgroundColor: const Color(0xff2d2d30),
           title: Text(
             'Pick image from',
             style: GoogleFonts.italiana(fontWeight: FontWeight.bold, color: Colors.white),
@@ -60,7 +60,7 @@ class _ProfilePicState extends State<ProfilePic> {
   Widget build(BuildContext context) {
     //____________________________________________________ Background Image
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('images/b1.jpg'),
           fit: BoxFit.cover,
@@ -132,7 +132,7 @@ class _ProfilePicState extends State<ProfilePic> {
       //____________________________________________________ Upload image to Firebase Storage
       Reference ref = FirebaseStorage.instance
           .ref()
-          .child('image/${FirebaseAuth.instance.currentUser!.email}');
+          .child('image/ProfilePic/${FirebaseAuth.instance.currentUser!.email}');
       UploadTask uploadTask = ref.putFile(pickedImage!);
       TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
 

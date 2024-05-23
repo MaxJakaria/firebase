@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 class CustomPopupMenuButton extends StatefulWidget {
   final List<ChatUser> userList;
 
-  const CustomPopupMenuButton({required this.userList});
+  const CustomPopupMenuButton({super.key, required this.userList});
 
   @override
   State<CustomPopupMenuButton> createState() => _CustomPopupMenuButtonState();
@@ -50,7 +50,7 @@ class _CustomPopupMenuButtonState extends State<CustomPopupMenuButton> {
                 (value) => Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => LoginPage(),
+                  builder: (context) => const LoginPage(),
                 ),
                     (route) => false),
           );
@@ -60,7 +60,7 @@ class _CustomPopupMenuButtonState extends State<CustomPopupMenuButton> {
         PopupMenuItem<String>(
           value: 'profile',
           child: ListTile(
-            leading: Icon(
+            leading: const Icon(
               Icons.person,
               color: Colors.blueAccent,
             ),
@@ -73,7 +73,7 @@ class _CustomPopupMenuButtonState extends State<CustomPopupMenuButton> {
         PopupMenuItem<String>(
           value: 'logout',
           child: ListTile(
-            leading: Icon(
+            leading: const Icon(
               Icons.logout,
               color: Colors.blueAccent,
             ),

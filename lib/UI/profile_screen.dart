@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase/Models/chat_user.dart';
 import 'package:firebase/UI/homepage.dart';
 import 'package:firebase/UI/uihelper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -54,7 +56,7 @@ class _profileScreenState extends State<profileScreen> {
                 children: [
                   SizedBox(height: mq.height * 0.03),
 
-                  //_________________________________________________________Stack for Profile picture
+                  //____________________________________________________________ Stack for Profile picture
                   Stack(children: [
                     _image != null
                         ? ClipRRect(
@@ -91,9 +93,9 @@ class _profileScreenState extends State<profileScreen> {
                           _showBottomSheet();
                         },
                         elevation: 0.01,
-                        shape: CircleBorder(),
+                        shape: const CircleBorder(),
                         color: Colors.transparent,
-                        child: Icon(
+                        child: const Icon(
                           Icons.edit,
                           color: Colors.white,
                         ),
@@ -119,7 +121,7 @@ class _profileScreenState extends State<profileScreen> {
                     validator: (val) =>
                         val != null && val.isNotEmpty ? null : 'Required Field',
                     decoration: InputDecoration(
-                      prefixIcon: Icon(
+                      prefixIcon: const Icon(
                         Icons.drive_file_rename_outline,
                         color: Colors.blueAccent,
                       ),
@@ -127,7 +129,7 @@ class _profileScreenState extends State<profileScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       hintText: 'eg. Abdullah',
-                      label: Text('Name'),
+                      label: const Text('Name'),
                     ),
                   ),
 
@@ -140,7 +142,7 @@ class _profileScreenState extends State<profileScreen> {
                     validator: (val) =>
                         val != null && val.isNotEmpty ? null : 'Required Field',
                     decoration: InputDecoration(
-                      prefixIcon: Icon(
+                      prefixIcon: const Icon(
                         Icons.description_outlined,
                         color: Colors.blueAccent,
                       ),
@@ -148,7 +150,7 @@ class _profileScreenState extends State<profileScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       hintText: 'eg. Feeling Happy !',
-                      label: Text('About'),
+                      label: const Text('About'),
                     ),
                   ),
 
@@ -156,7 +158,6 @@ class _profileScreenState extends State<profileScreen> {
 
                   //_____________________________________________________________________________________Update button
                   UIhelper.customButton(() async {
-                    final width = mq.width;
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
                       await FirebaseFirestore.instance
@@ -208,51 +209,80 @@ class _profileScreenState extends State<profileScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                //_____________________________________________________________________ Gallery
                 IconButton(
-                    onPressed: () async {
-                      final ImagePicker picker = ImagePicker();
-                      final XFile? image =
-                          await picker.pickImage(source: ImageSource.gallery);
-                      if (image != null) {
-                        setState(() {
-                          _image = image.path;
-                        });
-                        print(
-                          "Image Path:  ${image.path} -- MimeTyme: ${image.mimeType}",
-                        );
-                        Navigator.pop(context);
-                      }
-                    },
-                    icon: Icon(
-                      Icons.add_photo_alternate_rounded,
-                      size: mq.width * 0.2,
-                      color: Colors.blue[700],
-                    )),
+                  onPressed: () async {
+                    final ImagePicker picker = ImagePicker();
+                    final XFile? image =
+                        await picker.pickImage(source: ImageSource.gallery);
+                    if (image != null) {
+                      setState(() {
+                        _image = image.path;
+                      });
+
+                      updateProfilePic(File(_image!));
+                      Navigator.pop(context);
+                    }
+                  },
+                  icon: Icon(
+                    Icons.add_photo_alternate_rounded,
+                    size: mq.width * 0.2,
+                    color: Colors.blue[700],
+                  ),
+                ),
+
+                //____________________________________________________________________Camera
                 IconButton(
-                    onPressed: () async {
-                      final ImagePicker picker = ImagePicker();
-                      final XFile? image =
-                          await picker.pickImage(source: ImageSource.camera);
-                      if (image != null) {
-                        setState(() {
-                          _image = image.path;
-                        });
-                        print(
-                          "Image Path:  ${image.path} -- MimeTyme: ${image.mimeType}",
-                        );
-                        Navigator.pop(context);
-                      }
-                    },
-                    icon: Icon(
-                      Icons.add_a_photo_rounded,
-                      size: mq.width * 0.2,
-                      color: Colors.blue[700],
-                    ))
+                  onPressed: () async {
+                    final ImagePicker picker = ImagePicker();
+                    final XFile? image =
+                        await picker.pickImage(source: ImageSource.camera);
+                    if (image != null) {
+                      setState(() {
+                        _image = image.path;
+                      });
+
+                      updateProfilePic(File(_image!));
+                      Navigator.pop(context);
+                    }
+                  },
+                  icon: Icon(
+                    Icons.add_a_photo_rounded,
+                    size: mq.width * 0.2,
+                    color: Colors.blue[700],
+                  ),
+                )
               ],
             )
           ],
         );
       },
     );
+  }
+
+  //____________________________________________________________________________ Update profile image
+  updateProfilePic(File file) async {
+    //Getting image file extension
+    final ext = file.path.split('.').last;
+    print('Extension: $ext');
+
+    //Storage file reference with path
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child('image/ProfilePic/${FirebaseAuth.instance.currentUser!.email}');
+
+    //Uploading image
+    await ref
+        .putFile(file, SettableMetadata(contentType: 'image/$ext'))
+        .then((p0) {
+      print('Data Transfer: ${p0.bytesTransferred / 1000} kb');
+    });
+
+    //Updating image in firestore database
+    widget.user.image = await ref.getDownloadURL();
+    await FirebaseFirestore.instance
+        .collection('user')
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .update({'image': widget.user.image});
   }
 }

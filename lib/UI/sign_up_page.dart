@@ -81,7 +81,7 @@ class _SignUpPageState extends State<SignUpPage> {
       },
       child: Container(
         //___________________________________________________________________Background image
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('images/background.jpg'),
             fit: BoxFit.cover,
@@ -99,7 +99,7 @@ class _SignUpPageState extends State<SignUpPage> {
             centerTitle: true,
           ),
           body: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             child: Padding(
               padding: EdgeInsets.only(
                   top: MediaQuery.of(context).size.height * 0.05),

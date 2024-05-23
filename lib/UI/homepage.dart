@@ -19,7 +19,7 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController searchController = TextEditingController();
   bool _isSearching = false;
   List<ChatUser> list = [];
-  List<ChatUser> _searchList = [];
+  final List<ChatUser> _searchList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +37,12 @@ class _MyHomePageState extends State<MyHomePage> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Color(0xffFFFEFD),
-                Color(0xffFFE6B2),
-                Color(0xffC5FFBD),
+                const Color(0xffFFFEFD),
+                const Color(0xffFFE6B2),
+                const Color(0xffC5FFBD),
                 Colors.teal.shade200
               ],
-              stops: [
+              stops: const [
                 0.1,
                 0.45,
                 0.65,
@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ? Padding(
               padding: EdgeInsets.only(left: mq.width * 0.04),
               child: TextField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: InputBorder.none,
                   hintText: 'eg. name, email',
                 ),
