@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase/UI/chat_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +25,14 @@ class _ChatCardState extends State<ChatCard> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 0.5,
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatScreen(user: widget.user),
+            ),
+          );
+        },
         child: ListTile(
           // user profile picture
           // leading: const CircleAvatar(child: Icon(CupertinoIcons.person),),
@@ -41,7 +49,10 @@ class _ChatCardState extends State<ChatCard> {
               ),
             ),
           ),
-          title: Text(widget.user.name, style: const TextStyle(fontWeight: FontWeight.bold),),
+          title: Text(
+            widget.user.name,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
           subtitle: Text(
             widget.user.about,
             maxLines: 1,
@@ -52,8 +63,8 @@ class _ChatCardState extends State<ChatCard> {
             width: 15,
             height: 15,
             decoration: BoxDecoration(
-                color: Colors.green[400],
-                borderRadius: BorderRadius.circular(10),
+              color: Colors.green[400],
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
         ),

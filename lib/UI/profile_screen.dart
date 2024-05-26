@@ -33,6 +33,7 @@ class _profileScreenState extends State<profileScreen> {
       //________________________________________________________________________ For unfocus
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> AppBar
         appBar: AppBar(
           // leading: Icon(Icons.home),
           title: IconButton(
@@ -43,6 +44,8 @@ class _profileScreenState extends State<profileScreen> {
             icon: const Icon(Icons.home),
           ),
         ),
+
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> BODY
         body: Form(
           key: _formKey,
           child: Padding(
