@@ -56,44 +56,47 @@ class _MyHomePageState extends State<MyHomePage> {
             //____________________________________________________________________ Search Text field and Conditions
             title: _isSearching
                 ? Padding(
-              padding: EdgeInsets.only(left: mq.width * 0.04),
-              child: TextField(
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'eg. name, email',
-                ),
-                autofocus: true,
-                style: TextStyle(
-                    fontSize: mq.width * 0.045,
-                    letterSpacing: mq.width * 0.0025),
+                    padding: EdgeInsets.only(left: mq.width * 0.04),
+                    child: TextField(
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'eg. name, email',
+                      ),
+                      autofocus: true,
+                      style: TextStyle(
+                          fontSize: mq.width * 0.045,
+                          letterSpacing: mq.width * 0.0025),
 
-                //When search changes then update search list
-                onChanged: (val) {
-                  //______________________________________________________Search Logic
-                  _searchList.clear();
-                  for (var i in list) {
-                    if (i.name
-                        .toLowerCase()
-                        .contains(val.toLowerCase()) ||
-                        i.email
-                            .toLowerCase()
-                            .contains(val.toLowerCase())) {
-                      _searchList.add(i);
-                    }
-                    setState(() {
-                      _searchList;
-                    });
-                  }
-                },
-              ),
-            )
-                : Text('Chat',style: GoogleFonts.acme(),),
+                      //When search changes then update search list
+                      onChanged: (val) {
+                        //______________________________________________________Search Logic
+                        _searchList.clear();
+                        for (var i in list) {
+                          if (i.name
+                                  .toLowerCase()
+                                  .contains(val.toLowerCase()) ||
+                              i.email
+                                  .toLowerCase()
+                                  .contains(val.toLowerCase())) {
+                            _searchList.add(i);
+                          }
+                          setState(() {
+                            _searchList;
+                          });
+                        }
+                      },
+                    ),
+                  )
+                : Text(
+                    'Chat',
+                    style: GoogleFonts.acme(),
+                  ),
             actions: [
               //________________________________________________________________________Search button
               IconButton(
                 onPressed: () {
                   setState(
-                        () {
+                    () {
                       _isSearching = !_isSearching;
                     },
                   );
@@ -115,14 +118,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
                     // Find the index of the current user in the list
                     int currentUserIndex = list.indexWhere((user) =>
-                    user.email == FirebaseAuth.instance.currentUser!.email);
+                        user.email == FirebaseAuth.instance.currentUser!.email);
 
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
                               profileScreen(user: list[currentUserIndex])),
-
                     );
                   } else if (result == 'logout') {
                     showDialog(
@@ -133,12 +135,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                     await FirebaseAuth.instance.signOut().then(
                           (value) => Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginPage(),
-                        ),
-                      ),
-                    );
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LoginPage(),
+                            ),
+                          ),
+                        );
                   }
                 },
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -181,22 +183,28 @@ class _MyHomePageState extends State<MyHomePage> {
                   if (list.isNotEmpty) {
                     return ListView.builder(
                       itemCount:
-                      _isSearching ? _searchList.length : list.length,
+                          _isSearching ? _searchList.length : list.length,
                       physics: const BouncingScrollPhysics(),
                       itemBuilder: (context, index) {
-                        return ChatCard(
-                            user: _isSearching
-                                ? _searchList[index]
-                                : list[index]);
+                        final user =
+                            _isSearching ? _searchList[index] : list[index];
+                        if (user.email ==
+                            FirebaseAuth.instance.currentUser!.email) {
+
+                          // Skip displaying the current user's profile card
+                          return SizedBox.shrink();
+                        } else {
+                          return ChatCard(user: user);
+                        }
                       },
                     );
                   } else {
                     return Center(
                         child: Text(
-                          'No connections found !',
-                          style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.width * 0.05),
-                        ));
+                      'No connections found !',
+                      style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width * 0.05),
+                    ));
                   }
               }
             },
