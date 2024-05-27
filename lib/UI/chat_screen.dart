@@ -24,6 +24,7 @@ class _ChatScreenState extends State<ChatScreen> {
         automaticallyImplyLeading: false,
         flexibleSpace: _appBar(),
       ),
+      body: _chatInput(),
     );
   }
 
@@ -32,8 +33,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return Padding(
       padding: EdgeInsets.only(top: mq.height * 0.05),
       child: InkWell(
-        onTap: (){},
-
+        onTap: () {},
         child: Row(
           children: [
             IconButton(
@@ -55,7 +55,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ),
             ),
-
             SizedBox(width: 10),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -65,14 +64,78 @@ class _ChatScreenState extends State<ChatScreen> {
                   widget.user.name,
                   style: GoogleFonts.adamina(fontWeight: FontWeight.bold),
                 ),
-
                 SizedBox(height: 2),
-
                 Text('Last seen available')
               ],
             )
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _chatInput() {
+    final mq = MediaQuery.of(context).size;
+    return Padding(
+      padding: EdgeInsets.symmetric(
+          vertical: mq.height * 0.01, horizontal: mq.width * 0.01),
+      child: Row(
+        children: [
+          Expanded(
+            child: Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(mq.width * 0.05)),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.emoji_events_rounded,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Type a massage...',
+                          hintStyle: TextStyle(fontWeight: FontWeight.w300)),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.image,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.camera,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          MaterialButton(
+            onPressed: () {},
+            child: Padding(
+              padding: EdgeInsets.only(top: 10, right: 5, left: 10, bottom: 8),
+              child: Icon(
+                Icons.send,
+                color: Colors.blueAccent,
+              ),
+            ),
+            shape: CircleBorder(),
+            minWidth: 0,
+            color: Colors.white70,
+          )
+        ],
       ),
     );
   }
