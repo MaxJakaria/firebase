@@ -19,12 +19,63 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        flexibleSpace: _appBar(),
+    return GestureDetector(
+      onTap: ()=> FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          flexibleSpace: _appBar(),
+        ),
+        body: Column(
+          children: [
+
+            Expanded(
+              child: StreamBuilder(
+                // stream: FirebaseFirestore.instance.collection('user').snapshots(),
+                stream: null,
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                    case ConnectionState.none:
+                      // return const Center(
+                      //   child: CircularProgressIndicator(),
+                      // );
+                    case ConnectionState.active:
+                    case ConnectionState.done:
+                      // final data = snapshot.data?.docs;
+                      // list =
+                      //     data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
+                      //         [];
+              
+                      final list = [];
+              
+                      if (list.isNotEmpty) {
+                        return ListView.builder(
+                          itemCount:
+                           list.length,
+                          physics: const BouncingScrollPhysics(),
+                          itemBuilder: (context, index){
+                            return Text('Message: ${list[index]}');
+                          },
+                        );
+                      } else {
+                        return Center(
+                            child: Text(
+                                 'Offer Salam !',
+                              style: GoogleFonts.acme(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.black54),
+                            ),
+                        );
+
+                      }
+                  }
+                },
+              ),
+            ),
+
+            _chatInput(),
+          ],
+        ),
       ),
-      body: _chatInput(),
     );
   }
 
@@ -90,8 +141,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   IconButton(
                     onPressed: () {},
                     icon: Icon(
-                      Icons.emoji_events_rounded,
-                      color: Colors.blueAccent,
+                      Icons.speaker_notes_outlined,
+                      color: Colors.black54,
                     ),
                   ),
                   Expanded(
