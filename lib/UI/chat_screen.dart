@@ -1,5 +1,11 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase/Models/chat_user.dart';
+import 'package:firebase/Models/message.dart';
+import 'package:firebase/Models/message_card.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,61 +23,83 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+
+  //for storing all messages
+  final List<Message> list = [];
+
+  TextEditingController fromIdController = TextEditingController();
+  TextEditingController toldController = TextEditingController();
+  TextEditingController msgController = TextEditingController();
+  TextEditingController sentController = TextEditingController();
+  TextEditingController readController = TextEditingController();
+  TextEditingController typeController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: ()=> FocusScope.of(context).unfocus(),
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+
+        backgroundColor: Color.fromRGBO(219, 230, 239, 1.0),
+
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> AppBar
         appBar: AppBar(
+          backgroundColor: Colors.white70,
           automaticallyImplyLeading: false,
           flexibleSpace: _appBar(),
         ),
+
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> BODY
         body: Column(
           children: [
-
             Expanded(
               child: StreamBuilder(
                 // stream: FirebaseFirestore.instance.collection('user').snapshots(),
-                stream: null,
+                stream: FirebaseFirestore.instance.collection('messages').snapshots(),
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
                     case ConnectionState.none:
-                      // return const Center(
-                      //   child: CircularProgressIndicator(),
-                      // );
+                    // return const Center(
+                    //   child: CircularProgressIndicator(),
+                    // );
                     case ConnectionState.active:
                     case ConnectionState.done:
-                      // final data = snapshot.data?.docs;
+                      final data = snapshot.data?.docs;
+                      print('Data: ${jsonEncode(data![0].data())}');
                       // list =
                       //     data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
                       //         [];
-              
-                      final list = [];
-              
+                      list.clear();
+
+                      list.add(Message(msg: 'Hii!', read: '', told: 'xyz', type: Type.text, fromId: widget.user.email, sent: '12:00 pm'));
+                      list.add(Message(msg: 'Hello', read: '', told: FirebaseAuth.instance.currentUser!.email.toString(), type: Type.text, fromId: 'abc', sent: '12:00 pm'));
+
+
+
+
                       if (list.isNotEmpty) {
                         return ListView.builder(
-                          itemCount:
-                           list.length,
+                          itemCount: list.length,
                           physics: const BouncingScrollPhysics(),
-                          itemBuilder: (context, index){
-                            return Text('Message: ${list[index]}');
+                          itemBuilder: (context, index) {
+                            return MessageCard(message: list[index]);
                           },
                         );
                       } else {
                         return Center(
-                            child: Text(
-                                 'Offer Salam !',
-                              style: GoogleFonts.acme(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.black54),
-                            ),
+                          child: Text(
+                            'Offer Salam !',
+                            style: GoogleFonts.acme(
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.05,
+                                color: Colors.black54),
+                          ),
                         );
-
                       }
                   }
                 },
               ),
             ),
-
             _chatInput(),
           ],
         ),
@@ -145,6 +173,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       color: Colors.black54,
                     ),
                   ),
+                  //_______________________________________TextField
                   Expanded(
                     child: TextField(
                       keyboardType: TextInputType.multiline,
@@ -173,8 +202,18 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
           ),
+
+          //________________________________________________Send Button
           MaterialButton(
-            onPressed: () {},
+            onPressed: () {
+              MessageInfo(
+                  fromIdController.text.toString(),
+                  toldController.text.toString(),
+                  msgController.text.toString(),
+                  sentController.text.toString(),
+                  readController.text.toString(),
+                  typeController.text.toString());
+            },
             child: Padding(
               padding: EdgeInsets.only(top: 10, right: 5, left: 10, bottom: 8),
               child: Icon(
@@ -188,6 +227,24 @@ class _ChatScreenState extends State<ChatScreen> {
           )
         ],
       ),
+    );
+  }
+
+  MessageInfo(String fromId, String told, String msg, String sent, String read,
+      String type) async {
+    //______________________________________________________________ Set data to Firebase firestore
+    FirebaseFirestore.instance
+        .collection('messages')
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .set(
+      {
+        'fromId': fromId,
+        'told': told,
+        'msg': msg,
+        'sent': sent,
+        'read': read,
+        'type': type,
+      },
     );
   }
 }
