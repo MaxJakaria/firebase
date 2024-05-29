@@ -75,7 +75,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       itemCount: list.length,
                       physics: const BouncingScrollPhysics(),
                       itemBuilder: (context, index) {
-                        return MessageCard(message: list[index]);
+                        return MessageCard(message: list[index], user: widget.user);
                       },
                     );
                   } else {
@@ -216,22 +216,23 @@ class _ChatScreenState extends State<ChatScreen> {
   void _sendMessage() {
     if (textController.text.isNotEmpty) {
 
+      final time = DateTime.now().toIso8601String();
+
       final message = Message(
         fromId: FirebaseAuth.instance.currentUser!.email!,
         told: widget.user.email,
         msg: textController.text.trim(),
-        sent: DateTime.now().toIso8601String(), // Store the actual DateTime
+        sent: time, // Store the actual DateTime
         read: '',
         type: Type.text,
       );
+
 
       FirebaseFirestore.instance
           .collection('chats')
           .doc(getChatId(widget.user.email, FirebaseAuth.instance.currentUser!.email!))
           .collection('messages')
-          .add(message.toJson())
-          .then((value) => print('Message sent'))
-          .catchError((error) => print('Failed to send message: $error'));
+          .doc(time).set(message.toJson()) ;
 
       textController.clear();
     }

@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase/Models/chat_user.dart';
 import 'package:firebase/Models/message.dart';
+import 'package:firebase/UI/chat_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,8 +9,9 @@ import 'package:intl/intl.dart';
 
 class MessageCard extends StatefulWidget {
   final Message message;
+  final ChatUser user;
 
-  const MessageCard({super.key, required this.message});
+  const MessageCard({super.key, required this.message, required this.user});
 
   @override
   State<MessageCard> createState() => _MessageCardState();
@@ -21,21 +25,40 @@ class _MessageCardState extends State<MessageCard> {
         : _yourMessage(context);
   }
 
-  //____________________________________________________________________________Sender of another user message
+  String getChatId(String user1, String user2) {
+    return user1.hashCode <= user2.hashCode ? '$user1-$user2' : '$user2-$user1';
+  }
+
+  //---------------------------------------------------------------->>>>>>>>>>>> Your Message
   Widget _yourMessage(BuildContext context) {
     final mq = MediaQuery.of(context).size;
 
-    DateTime sentTime = DateTime.parse(widget.message.sent); // Parse the sent time
-    String formattedTime = DateFormat('HH:mm a').format(sentTime); // Format the time
+    //Update last message if sender and receiver are different
+    if (widget.message.read.isEmpty) {
+      FirebaseFirestore.instance
+          .collection(
+              'chats/${getChatId(widget.user.email, FirebaseAuth.instance.currentUser!.email!)}/messages/')
+          .doc(widget.message.sent)
+          .update(
+        {
+          'read': DateTime.now().millisecondsSinceEpoch.toString(),
+        },
+      );
 
+      print('Messagge read updated');
+    }
 
+    // Parse the sent time
+    DateTime sentTime = DateTime.parse(widget.message.sent);
+    // Format the time
+    String formattedTime = DateFormat('HH:mm a').format(sentTime);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Flexible(
           child: Container(
-            padding: EdgeInsets.all(mq.width * 0.04),
+            padding: EdgeInsets.all(mq.width * 0.025),
             margin: EdgeInsets.symmetric(
                 horizontal: mq.width * 0.04, vertical: mq.height * 0.01),
             decoration: BoxDecoration(
@@ -46,17 +69,23 @@ class _MessageCardState extends State<MessageCard> {
                   topRight: Radius.circular(mq.width * 0.1),
                   bottomRight: Radius.circular(mq.width * 0.1)),
             ),
+
+            //__________________________________________________________________ Text
             child: Text(
               widget.message.msg,
               style: GoogleFonts.acme(fontSize: mq.width * 0.04),
             ),
           ),
         ),
+
+        //______________________________________________________________________ Send Time
+
         Padding(
-          padding: EdgeInsets.only(right: mq.width * 0.04, top: mq.width * 0.04),
+          padding:
+              EdgeInsets.only(right: mq.width * 0.04, top: mq.width * 0.04),
           child: Text(
             formattedTime,
-            style:  GoogleFonts.adamina(
+            style: GoogleFonts.adamina(
                 fontSize: mq.width * 0.03, color: Colors.black45),
           ),
         )
@@ -64,12 +93,14 @@ class _MessageCardState extends State<MessageCard> {
     );
   }
 
-  //____________________________________________________________________________Our or user message
+  //-------------------------------------------------------------->>>>>>>>>>>>>> MY Message
   Widget _myMessage(BuildContext context) {
     final mq = MediaQuery.of(context).size;
 
-    DateTime sentTime = DateTime.parse(widget.message.sent); // Parse the sent time
-    String formattedTime = DateFormat('HH:mm a').format(sentTime); // Format the time
+    // Parse the sent time
+    DateTime sentTime = DateTime.parse(widget.message.sent);
+    // Format the time
+    String formattedTime = DateFormat('HH:mm a').format(sentTime);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -78,16 +109,6 @@ class _MessageCardState extends State<MessageCard> {
           children: [
             //For Adding some space
             SizedBox(width: mq.width * 0.04),
-
-            //Double tik button icon for message read
-            if (widget.message.read.isNotEmpty)
-              const Icon(
-                Icons.done_all_rounded,
-                color: Colors.blueAccent,
-              ),
-
-            //For Adding some space
-            SizedBox(width: mq.width * 0.01),
 
             //__________________________________________________________________Read Time
 
@@ -99,11 +120,21 @@ class _MessageCardState extends State<MessageCard> {
                     fontSize: mq.width * 0.03, color: Colors.black45),
               ),
             ),
+
+            //For Adding some space
+            SizedBox(width: mq.width * 0.01),
+
+            //__________________________________________________________________Double tik button icon for message read
+            if (widget.message.read.isNotEmpty)
+              const Icon(
+                Icons.done_all_rounded,
+                color: Colors.blueAccent,
+              ),
           ],
         ),
         Flexible(
           child: Container(
-            padding: EdgeInsets.all(mq.width * 0.04),
+            padding: EdgeInsets.all(mq.width * 0.025),
             margin: EdgeInsets.symmetric(
                 horizontal: mq.width * 0.04, vertical: mq.height * 0.01),
             decoration: BoxDecoration(
@@ -114,6 +145,8 @@ class _MessageCardState extends State<MessageCard> {
                   topRight: Radius.circular(mq.width * 0.1),
                   bottomLeft: Radius.circular(mq.width * 0.1)),
             ),
+
+            //__________________________________________________________________ Text
             child: Text(
               widget.message.msg,
               style: GoogleFonts.acme(fontSize: mq.width * 0.04),
