@@ -31,7 +31,7 @@ class _MessageCardState extends State<MessageCard> {
 
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Flexible(
           child: Container(
@@ -53,11 +53,11 @@ class _MessageCardState extends State<MessageCard> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(right: mq.width * 0.04),
+          padding: EdgeInsets.only(right: mq.width * 0.04, top: mq.width * 0.04),
           child: Text(
             formattedTime,
-            style: GoogleFonts.acme(
-                fontSize: mq.width * 0.04, color: Colors.black45),
+            style:  GoogleFonts.adamina(
+                fontSize: mq.width * 0.03, color: Colors.black45),
           ),
         )
       ],
@@ -72,7 +72,7 @@ class _MessageCardState extends State<MessageCard> {
     String formattedTime = DateFormat('HH:mm a').format(sentTime); // Format the time
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Row(
           children: [
@@ -91,10 +91,13 @@ class _MessageCardState extends State<MessageCard> {
 
             //__________________________________________________________________Read Time
 
-            Text(
-              formattedTime,
-              style: GoogleFonts.acme(
-                  fontSize: mq.width * 0.04, color: Colors.black45),
+            Padding(
+              padding: EdgeInsets.only(top: mq.width * 0.04),
+              child: Text(
+                formattedTime,
+                style: GoogleFonts.adamina(
+                    fontSize: mq.width * 0.03, color: Colors.black45),
+              ),
             ),
           ],
         ),
