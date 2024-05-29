@@ -7,10 +7,10 @@ class Message {
     required this.fromId,
     required this.sent,
   });
+
   late final String msg;
   late final String read;
   late final String told;
-
   late final String fromId;
   late final String sent;
   late final Type type;
@@ -19,7 +19,7 @@ class Message {
     msg = json['msg'].toString();
     read = json['read'].toString();
     told = json['told'].toString();
-    type = json['type'].toString() == Type.image.name? Type.image : Type.text ;
+    type = json['type'].toString() == Type.image.name ? Type.image : Type.text;
     fromId = json['fromId'].toString();
     sent = json['sent'].toString();
   }
@@ -29,7 +29,7 @@ class Message {
     data['msg'] = msg;
     data['read'] = read;
     data['told'] = told;
-    data['type'] = type;
+    data['type'] = type.name;
     data['fromId'] = fromId;
     data['sent'] = sent;
     return data;

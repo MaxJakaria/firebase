@@ -192,7 +192,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             FirebaseAuth.instance.currentUser!.email) {
 
                           // Skip displaying the current user's profile card
-                          return SizedBox.shrink();
+                          return const SizedBox.shrink();
                         } else {
                           return ChatCard(user: user);
                         }

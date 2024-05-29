@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 
 class ChatScreen extends StatefulWidget {
   final ChatUser user;
@@ -23,79 +23,70 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-
-  //for storing all messages
+  // For storing all messages
   final List<Message> list = [];
 
-  TextEditingController fromIdController = TextEditingController();
-  TextEditingController toldController = TextEditingController();
-  TextEditingController msgController = TextEditingController();
-  TextEditingController sentController = TextEditingController();
-  TextEditingController readController = TextEditingController();
-  TextEditingController typeController = TextEditingController();
+  final TextEditingController textController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        backgroundColor: const Color.fromRGBO(219, 230, 239, 1.0),
 
-        backgroundColor: Color.fromRGBO(219, 230, 239, 1.0),
-
-        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> AppBar
+        // AppBar
         appBar: AppBar(
           backgroundColor: Colors.white70,
           automaticallyImplyLeading: false,
           flexibleSpace: _appBar(),
         ),
 
-        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> BODY
+        // Body
         body: Column(
           children: [
             Expanded(
+
+              //________________________________________________________________ StreamBuilder
               child: StreamBuilder(
-                // stream: FirebaseFirestore.instance.collection('user').snapshots(),
-                stream: FirebaseFirestore.instance.collection('messages').snapshots(),
+                stream: FirebaseFirestore.instance
+                    .collection('chats')
+                    .doc(getChatId(widget.user.email, FirebaseAuth.instance.currentUser!.email!))
+                    .collection('messages')
+                    .orderBy('sent', descending: true)
+                    .snapshots(),
                 builder: (context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                    case ConnectionState.none:
-                    // return const Center(
-                    //   child: CircularProgressIndicator(),
-                    // );
-                    case ConnectionState.active:
-                    case ConnectionState.done:
-                      final data = snapshot.data?.docs;
-                      print('Data: ${jsonEncode(data![0].data())}');
-                      // list =
-                      //     data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
-                      //         [];
-                      list.clear();
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: SizedBox(),
+                    );
+                  }
 
-                      list.add(Message(msg: 'Hii!', read: '', told: 'xyz', type: Type.text, fromId: widget.user.email, sent: '12:00 pm'));
-                      list.add(Message(msg: 'Hello', read: '', told: FirebaseAuth.instance.currentUser!.email.toString(), type: Type.text, fromId: 'abc', sent: '12:00 pm'));
+                  final data = snapshot.data!.docs;
+                  list.clear();
 
+                  for (var doc in data) {
+                    list.add(Message.fromJson(doc.data()));
+                  }
 
-
-
-                      if (list.isNotEmpty) {
-                        return ListView.builder(
-                          itemCount: list.length,
-                          physics: const BouncingScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return MessageCard(message: list[index]);
-                          },
-                        );
-                      } else {
-                        return Center(
-                          child: Text(
-                            'Offer Salam !',
-                            style: GoogleFonts.acme(
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.05,
-                                color: Colors.black54),
-                          ),
-                        );
-                      }
+                  if (list.isNotEmpty) {
+                    return ListView.builder(
+                      reverse: true,
+                      itemCount: list.length,
+                      physics: const BouncingScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return MessageCard(message: list[index]);
+                      },
+                    );
+                  } else {
+                    return Center(
+                      child: Text(
+                        'Offer Salam !',
+                        style: GoogleFonts.acme(
+                            fontSize: MediaQuery.of(context).size.width * 0.05,
+                            color: Colors.black54),
+                      ),
+                    );
                   }
                 },
               ),
@@ -119,7 +110,7 @@ class _ChatScreenState extends State<ChatScreen> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back),
             ),
             ClipRRect(
               borderRadius: BorderRadius.circular(mq.height * 0.3),
@@ -128,13 +119,12 @@ class _ChatScreenState extends State<ChatScreen> {
                 height: mq.height * 0.05,
                 imageUrl: widget.user.image,
                 fit: BoxFit.cover,
-                // placeholder: (context, url)=> CircularProgressIndicator(),
                 errorWidget: (context, url, error) => const CircleAvatar(
                   child: Icon(CupertinoIcons.person),
                 ),
               ),
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,8 +133,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   widget.user.name,
                   style: GoogleFonts.adamina(fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 2),
-                Text('Last seen available')
+                const SizedBox(height: 2),
+                const Text('Last seen available')
               ],
             )
           ],
@@ -168,32 +158,33 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: [
                   IconButton(
                     onPressed: () {},
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.speaker_notes_outlined,
                       color: Colors.black54,
                     ),
                   ),
-                  //_______________________________________TextField
+                  //____________________________________________________________TextField
                   Expanded(
                     child: TextField(
+                      controller: textController,
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Type a massage...',
+                          hintText: 'Type a message...',
                           hintStyle: TextStyle(fontWeight: FontWeight.w300)),
                     ),
                   ),
                   IconButton(
                     onPressed: () {},
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.image,
                       color: Colors.blueAccent,
                     ),
                   ),
                   IconButton(
                     onPressed: () {},
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.camera,
                       color: Colors.blueAccent,
                     ),
@@ -203,48 +194,54 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
 
-          //________________________________________________Send Button
+          //____________________________________________________________________Send Button
           MaterialButton(
-            onPressed: () {
-              MessageInfo(
-                  fromIdController.text.toString(),
-                  toldController.text.toString(),
-                  msgController.text.toString(),
-                  sentController.text.toString(),
-                  readController.text.toString(),
-                  typeController.text.toString());
-            },
-            child: Padding(
+            onPressed: _sendMessage,
+            shape: const CircleBorder(),
+            minWidth: 0,
+            color: Colors.white70,
+            child: const Padding(
               padding: EdgeInsets.only(top: 10, right: 5, left: 10, bottom: 8),
               child: Icon(
                 Icons.send,
                 color: Colors.blueAccent,
               ),
             ),
-            shape: CircleBorder(),
-            minWidth: 0,
-            color: Colors.white70,
           )
         ],
       ),
     );
   }
 
-  MessageInfo(String fromId, String told, String msg, String sent, String read,
-      String type) async {
-    //______________________________________________________________ Set data to Firebase firestore
-    FirebaseFirestore.instance
-        .collection('messages')
-        .doc(FirebaseAuth.instance.currentUser!.email)
-        .set(
-      {
-        'fromId': fromId,
-        'told': told,
-        'msg': msg,
-        'sent': sent,
-        'read': read,
-        'type': type,
-      },
-    );
+  void _sendMessage() {
+    if (textController.text.isNotEmpty) {
+
+      final message = Message(
+        fromId: FirebaseAuth.instance.currentUser!.email!,
+        told: widget.user.email,
+        msg: textController.text.trim(),
+        sent: DateTime.now().toIso8601String(), // Store the actual DateTime
+        read: '',
+        type: Type.text,
+      );
+
+      FirebaseFirestore.instance
+          .collection('chats')
+          .doc(getChatId(widget.user.email, FirebaseAuth.instance.currentUser!.email!))
+          .collection('messages')
+          .add(message.toJson())
+          .then((value) => print('Message sent'))
+          .catchError((error) => print('Failed to send message: $error'));
+
+      textController.clear();
+    }
+  }
+
+
+
+  String getChatId(String user1, String user2) {
+    return user1.hashCode <= user2.hashCode
+        ? '$user1-$user2'
+        : '$user2-$user1';
   }
 }
