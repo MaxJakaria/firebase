@@ -19,7 +19,6 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
-  TextEditingController otpController = TextEditingController();
 
   //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SIGN UP FUNCTIONS
 
@@ -60,42 +59,48 @@ class _SignUpPageState extends State<SignUpPage> {
                   //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> On Press with verification condition
                   onPressed: () {
                     try {
-                      if (FirebaseAuth.instance.currentUser!.emailVerified ==
-                          false) {
-                        //Show Dialog
-                        showDialog(
-                          context: context,
-                          builder: (_) => const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
+                      // Inside the onPressed callback of your 'Done' button
+                      // Check if the email is verified asynchronously
+                      FirebaseAuth.instance.currentUser!.reload().then((_) {
+                        if (FirebaseAuth.instance.currentUser!.emailVerified) {
+                          // Email is verified, proceed with sign-up
+                          showDialog(
+                            context: context,
+                            builder: (_) => const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
 
-                        //______________________________________________________________ Set data to Firebase firestore
-                        FirebaseFirestore.instance
-                            .collection('user')
-                            .doc(userCredential.user!.email)
-                            .set({
-                          'name': name,
-                          'email': email,
-                          'about': "I'm using IslamicMedia !",
-                        });
+                          // Set data to Firebase Firestore
+                          FirebaseFirestore.instance
+                              .collection('user')
+                              .doc(userCredential.user!.email)
+                              .set({
+                            'name': name,
+                            'email': email,
+                            'about': "I'm using IslamicMedia !",
+                          }).then((_) {
+                            Navigator.pop(context);
 
-                        //Remove Dialog
-                        Navigator.pop(context);
-
-                        // Navigate to the next screen after successful sign-up
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ProfilePic(),
-                          ),
-                        );
-                      } else {
-                        FirebaseAuth.instance.currentUser!.delete();
-                        //Remove Dialog
-                        Navigator.pop(context);
-                        UIhelper.customAlertBox(context, 'Verification faild!');
-                      }
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ProfilePic(),
+                              ),
+                            );
+                          }).catchError((error) {
+                            // Handle error
+                            print("Error: $error");
+                          });
+                        } else {
+                          // Email is not verified yet, inform the user
+                          FirebaseAuth.instance.currentUser!.delete();
+                          // Remove Dialog
+                          Navigator.pop(context);
+                          UIhelper.customAlertBox(
+                              context, 'Verification failed!');
+                        }
+                      });
                     } on FirebaseAuthException {
                       UIhelper.customAlertBox(context, 'Something wrong !');
                     }

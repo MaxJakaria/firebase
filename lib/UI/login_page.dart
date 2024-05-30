@@ -1,5 +1,6 @@
 import 'package:firebase/Check/forgot_password.dart';
 import 'package:firebase/UI/homepage.dart';
+import 'package:firebase/UI/password_field.dart';
 import 'package:firebase/UI/sign_up_page.dart';
 import 'package:firebase/UI/uihelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -74,8 +75,7 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               UIhelper.customTextField(
                   emailController, "Email", Icons.email, false, context),
-              UIhelper.customTextField(
-                  passwordController, "Password", Icons.key, false, context),
+              CustomPasswordField(controller: passwordController, text: 'Password', iconData: Icons.lock_person_rounded),
               const SizedBox(height: 30),
 
               //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> LOGIN BUTTON
