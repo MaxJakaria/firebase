@@ -30,46 +30,88 @@ class _SignUpPageState extends State<SignUpPage> {
     } else if (password != confirmPassword) {
       UIhelper.customAlertBox(context, "Passwords are not the same !");
     } else {
-      try {
-        //___________________________________________________________ Create user in Firebase Authentication
+      //____________________________________________ Create user in Firebase Authentication & send verification link
 
-        UserCredential? userCredential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
+      UserCredential? userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-        //Show Dialog
-        showDialog(
+      await FirebaseAuth.instance.currentUser?.sendEmailVerification();
+
+      //________________________________________________________________________ Show Alert Dialog
+
+      showDialog(
           context: context,
-          builder: (_) => const Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              backgroundColor: Colors.black54,
+              title: Text(
+                'We have sent a verification link.',
+                style: GoogleFonts.acme(
+                    color: Colors.white,
+                    fontSize: MediaQuery.of(context).size.width * 0.05),
+              ),
+              actions: [
+                TextButton(
+                  //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> On Press with verification condition
+                  onPressed: () {
+                    try {
+                      if (FirebaseAuth.instance.currentUser!.emailVerified ==
+                          false) {
+                        //Show Dialog
+                        showDialog(
+                          context: context,
+                          builder: (_) => const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
 
-        //______________________________________________________________ Set data to Firebase firestore
-        FirebaseFirestore.instance
-            .collection('user')
-            .doc(userCredential.user!.email)
-            .set({
-          'name': name,
-          'email': email,
-          'about': "I'm using IslamicMedia !",
-        });
+                        //______________________________________________________________ Set data to Firebase firestore
+                        FirebaseFirestore.instance
+                            .collection('user')
+                            .doc(userCredential.user!.email)
+                            .set({
+                          'name': name,
+                          'email': email,
+                          'about': "I'm using IslamicMedia !",
+                        });
 
-        //Remove Dialog
-        Navigator.pop(context);
+                        //Remove Dialog
+                        Navigator.pop(context);
 
-        // Navigate to the next screen after successful sign-up
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ProfilePic(),
-          ),
-        );
-      } on FirebaseAuthException {
-        UIhelper.customAlertBox(context, 'Something wrong !');
-      }
+                        // Navigate to the next screen after successful sign-up
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ProfilePic(),
+                          ),
+                        );
+                      } else {
+                        FirebaseAuth.instance.currentUser!.delete();
+                        //Remove Dialog
+                        Navigator.pop(context);
+                        UIhelper.customAlertBox(context, 'Verification faild!');
+                      }
+                    } on FirebaseAuthException {
+                      UIhelper.customAlertBox(context, 'Something wrong !');
+                    }
+                  },
+
+                  //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Text
+                  child: Text(
+                    'Done',
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.04,
+                        color: Colors.green),
+                  ),
+                )
+              ],
+            );
+          });
     }
   }
 
@@ -91,7 +133,7 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          //_______________________________________________________________AppBar
+          //____________________________________________________________________AppBar
           appBar: AppBar(
             backgroundColor: Colors.blueGrey[200],
             title: Text(
@@ -100,6 +142,8 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
             centerTitle: true,
           ),
+
+          //____________________________________________________________________BODY
           body: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Padding(

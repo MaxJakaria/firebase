@@ -6,7 +6,7 @@ class CustomPasswordField extends StatefulWidget {
   final String text;
   final IconData iconData;
 
-  CustomPasswordField({
+  const CustomPasswordField({super.key, 
     required this.controller,
     required this.text,
     required this.iconData,
@@ -38,8 +38,8 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
           prefixIcon: Icon(widget.iconData),
           suffixIcon: IconButton(
             icon: _obscureText
-                ? Icon(Icons.visibility_off)
-                : Icon(Icons.visibility),
+                ? const Icon(Icons.visibility_off)
+                : const Icon(Icons.visibility),
             onPressed: () {
               setState(() {
                 _obscureText = !_obscureText;
