@@ -9,14 +9,15 @@ class UIhelper {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: TextField(
-        style: TextStyle(
-            fontSize: width * 0.04,
-            color: Colors.black87,
-            fontWeight: FontWeight.bold),
+        style: GoogleFonts.acme(
+          fontSize: width * 0.045,
+          color: Colors.black87,
+        ),
         controller: controller,
         obscureText: toHide,
         decoration: InputDecoration(
           labelText: text,
+          labelStyle: GoogleFonts.aBeeZee(),
           prefixIcon: Icon(iconData),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(7)),
         ),
@@ -24,8 +25,8 @@ class UIhelper {
     );
   }
 
-  static customButton(
-      VoidCallback voidCallback, String text,Color buttonColor, BuildContext context) {
+  static customButton(VoidCallback voidCallback, String text, Color buttonColor,
+      BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
     return Padding(
@@ -56,11 +57,13 @@ class UIhelper {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           backgroundColor: Colors.black54,
           title: Text(
             text,
-            style: GoogleFonts.acme(color: Colors.white, fontSize: width * 0.05),
+            style:
+                GoogleFonts.acme(color: Colors.white, fontSize: width * 0.05),
           ),
           actions: [
             TextButton(
@@ -78,8 +81,8 @@ class UIhelper {
     );
   }
 
-  static textField( IconData iconData,
-      String text, String levelText, String hintText, BuildContext context) {
+  static textField(IconData iconData, String text, String levelText,
+      String hintText, BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
     return TextFormField(
@@ -90,7 +93,10 @@ class UIhelper {
       ),
       initialValue: text,
       decoration: InputDecoration(
-        prefixIcon: Icon(iconData, color: Colors.blueAccent,),
+        prefixIcon: Icon(
+          iconData,
+          color: Colors.blueAccent,
+        ),
         border: OutlineInputBorder(
             borderSide: const BorderSide(color: Colors.amber),
             borderRadius: BorderRadius.circular(12)),
@@ -99,10 +105,10 @@ class UIhelper {
       ),
     );
   }
-  
-  
+
   //For getting formatted time milliSecondsSinceEpochs String
-  static String getFormattedTime({required BuildContext context, required String time}){
+  static String getFormattedTime(
+      {required BuildContext context, required String time}) {
     final date = DateTime.fromMicrosecondsSinceEpoch(int.parse(time));
     return TimeOfDay.fromDateTime(date).format(context);
   }

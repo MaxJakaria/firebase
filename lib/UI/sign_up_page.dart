@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase/Cloude%20Storage/profile_pic.dart';
 import 'package:firebase/UI/login_page.dart';
+import 'package:firebase/UI/password_field.dart';
 import 'package:firebase/UI/uihelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController otpController = TextEditingController();
 
   //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SIGN UP FUNCTIONS
 
@@ -109,13 +111,18 @@ class _SignUpPageState extends State<SignUpPage> {
                   //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Text Fields
                   UIhelper.customTextField(nameController, 'Name',
                       Icons.account_box_outlined, false, context),
-                  UIhelper.customTextField(emailController, "Email",
-                      Icons.email_outlined, false, context),
-                  UIhelper.customTextField(passwordController, "Password",
-                      Icons.key, false, context),
 
-                  UIhelper.customTextField(confirmPasswordController,
-                      "Confirm password", Icons.key, false, context),
+                  UIhelper.customTextField(emailController, 'Email',
+                      Icons.email_rounded, false, context),
+
+                  CustomPasswordField(
+                      controller: passwordController,
+                      text: 'Password',
+                      iconData: Icons.key),
+                  CustomPasswordField(
+                      controller: confirmPasswordController,
+                      text: 'Confirm password',
+                      iconData: Icons.key),
                   const SizedBox(height: 30),
                   //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SIGNUP BUTTON
 
