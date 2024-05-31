@@ -212,7 +212,7 @@ class _profileScreenState extends State<profileScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                //_____________________________________________________________________ Gallery
+                //_____________________________________________________________________ Gallery for pic an image
                 IconButton(
                   onPressed: () async {
                     final ImagePicker picker = ImagePicker();
@@ -234,10 +234,12 @@ class _profileScreenState extends State<profileScreen> {
                   ),
                 ),
 
-                //____________________________________________________________________Camera
+                //____________________________________________________________________Camera for pick an image
                 IconButton(
                   onPressed: () async {
                     final ImagePicker picker = ImagePicker();
+
+                    //Pick an image
                     final XFile? image =
                         await picker.pickImage(source: ImageSource.camera);
                     if (image != null) {
@@ -246,6 +248,7 @@ class _profileScreenState extends State<profileScreen> {
                       });
 
                       updateProfilePic(File(_image!));
+                      //For hiding bottom shit
                       Navigator.pop(context);
                     }
                   },

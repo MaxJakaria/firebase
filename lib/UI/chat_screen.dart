@@ -1,3 +1,4 @@
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,10 +6,11 @@ import 'package:firebase/Models/chat_user.dart';
 import 'package:firebase/Models/message.dart';
 import 'package:firebase/Models/message_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:image_picker/image_picker.dart';
 
 class ChatScreen extends StatefulWidget {
   final ChatUser user;
@@ -46,12 +48,12 @@ class _ChatScreenState extends State<ChatScreen> {
         body: Column(
           children: [
             Expanded(
-
               //________________________________________________________________ StreamBuilder
               child: StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection('chats')
-                    .doc(getChatId(widget.user.email, FirebaseAuth.instance.currentUser!.email!))
+                    .doc(getChatId(widget.user.email,
+                        FirebaseAuth.instance.currentUser!.email!))
                     .collection('messages')
                     .orderBy('sent', descending: true)
                     .snapshots(),
@@ -75,7 +77,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       itemCount: list.length,
                       physics: const BouncingScrollPhysics(),
                       itemBuilder: (context, index) {
-                        return MessageCard(message: list[index], user: widget.user);
+                        return MessageCard(
+                            message: list[index], user: widget.user);
                       },
                     );
                   } else {
@@ -175,6 +178,8 @@ class _ChatScreenState extends State<ChatScreen> {
                           hintStyle: TextStyle(fontWeight: FontWeight.w300)),
                     ),
                   ),
+
+                  //____________________________________________________________Gallery
                   IconButton(
                     onPressed: () {},
                     icon: const Icon(
@@ -182,8 +187,17 @@ class _ChatScreenState extends State<ChatScreen> {
                       color: Colors.blueAccent,
                     ),
                   ),
+
+                  //____________________________________________________________Camera
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+                      final XFile? image =
+                          await picker.pickImage(source: ImageSource.camera, imageQuality: 70);
+                      if (image != null) {
+                        sendChatImage(File(image.path));
+                      }
+                    },
                     icon: const Icon(
                       Icons.camera,
                       color: Colors.blueAccent,
@@ -196,7 +210,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
           //____________________________________________________________________Send Button
           MaterialButton(
-            onPressed: _sendMessage,
+            onPressed: sendMessage(textController.text.trim(), Type.text),
             shape: const CircleBorder(),
             minWidth: 0,
             color: Colors.white70,
@@ -213,36 +227,55 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void _sendMessage() {
-    if (textController.text.isNotEmpty) {
-
+  sendMessage(String msg, Type type) {
+    if (msg.isNotEmpty) {
       final time = DateTime.now().toIso8601String();
 
       final message = Message(
         fromId: FirebaseAuth.instance.currentUser!.email!,
         told: widget.user.email,
-        msg: textController.text.trim(),
+        msg: msg,
         sent: time, // Store the actual DateTime
         read: '',
-        type: Type.text,
+        type: type,
       );
-
 
       FirebaseFirestore.instance
           .collection('chats')
-          .doc(getChatId(widget.user.email, FirebaseAuth.instance.currentUser!.email!))
+          .doc(getChatId(
+              widget.user.email, FirebaseAuth.instance.currentUser!.email!))
           .collection('messages')
-          .doc(time).set(message.toJson()) ;
+          .doc(time)
+          .set(message.toJson());
 
       textController.clear();
     }
   }
 
-
-
+  //____________________________________________________________________________Get chat ID
   String getChatId(String user1, String user2) {
-    return user1.hashCode <= user2.hashCode
-        ? '$user1-$user2'
-        : '$user2-$user1';
+    return user1.hashCode <= user2.hashCode ? '$user1-$user2' : '$user2-$user1';
+  }
+
+  //____________________________________________________________________________Send chat image
+  sendChatImage(File file) async {
+    //Getting image file extension
+    final ext = file.path.split('.').last;
+    print('Extension: $ext');
+
+    //Storage file reference with path
+    final ref = FirebaseStorage.instance.ref().child(
+        'image/chat_images/${getChatId(widget.user.email, FirebaseAuth.instance.currentUser!.email!)}/${DateTime.now().millisecondsSinceEpoch}');
+
+    //Uploading image
+    await ref
+        .putFile(file, SettableMetadata(contentType: 'image/$ext'))
+        .then((p0) {
+      print('Data Transfer: ${p0.bytesTransferred / 1000} kb');
+    });
+
+    //Updating image in firestore database
+    final imageUrl = await ref.getDownloadURL();
+    await sendMessage(imageUrl, Type.image);
   }
 }

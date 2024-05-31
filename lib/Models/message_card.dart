@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase/Models/chat_user.dart';
 import 'package:firebase/Models/message.dart';
@@ -57,7 +58,9 @@ class _MessageCardState extends State<MessageCard> {
       children: [
         Flexible(
           child: Container(
-            padding: EdgeInsets.all(mq.width * 0.025),
+            padding: EdgeInsets.all(widget.message.type == Type.text
+                ? mq.width * 0.025
+                : mq.width * 0.02),
             margin: EdgeInsets.symmetric(
                 horizontal: mq.width * 0.04, vertical: mq.height * 0.01),
             decoration: BoxDecoration(
@@ -70,10 +73,29 @@ class _MessageCardState extends State<MessageCard> {
             ),
 
             //__________________________________________________________________ Text
-            child: Text(
-              widget.message.msg,
-              style: GoogleFonts.acme(fontSize: mq.width * 0.04),
-            ),
+
+            child: widget.message.type == Type.text
+                ?
+                //Show Text
+                Text(
+                    widget.message.msg,
+                    style: GoogleFonts.acme(fontSize: mq.width * 0.04),
+                  )
+                :
+                //Show image
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(mq.height * 0.04),
+                  child: CachedNetworkImage(
+                    imageUrl: widget.message.msg,
+                    placeholder: (context, url) =>
+                        CircularProgressIndicator(),
+                    fit: BoxFit.cover,
+                    errorWidget: (context, url, error) => Icon(
+                      Icons.image,
+                      size: 70,
+                    ),
+                  ),
+                  ),
           ),
         ),
 
@@ -133,7 +155,9 @@ class _MessageCardState extends State<MessageCard> {
         ),
         Flexible(
           child: Container(
-            padding: EdgeInsets.all(mq.width * 0.025),
+            padding: EdgeInsets.all(widget.message.type == Type.text
+                ? mq.width * 0.025
+                : mq.width * 0.02),
             margin: EdgeInsets.symmetric(
                 horizontal: mq.width * 0.04, vertical: mq.height * 0.01),
             decoration: BoxDecoration(
@@ -146,10 +170,28 @@ class _MessageCardState extends State<MessageCard> {
             ),
 
             //__________________________________________________________________ Text
-            child: Text(
-              widget.message.msg,
-              style: GoogleFonts.acme(fontSize: mq.width * 0.04),
-            ),
+            child: widget.message.type == Type.text
+                ?
+                //Show Text
+                Text(
+                    widget.message.msg,
+                    style: GoogleFonts.acme(fontSize: mq.width * 0.04),
+                  )
+                :
+                //Show image
+                ClipRRect(
+                    borderRadius: BorderRadius.circular(mq.height * 0.04),
+                    child: CachedNetworkImage(
+                      imageUrl: widget.message.msg,
+                      placeholder: (context, url) =>
+                          CircularProgressIndicator(),
+                      fit: BoxFit.cover,
+                      errorWidget: (context, url, error) => Icon(
+                        Icons.image,
+                        size: 70,
+                      ),
+                    ),
+                  ),
           ),
         ),
       ],
