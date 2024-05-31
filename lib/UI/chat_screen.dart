@@ -37,14 +37,14 @@ class _ChatScreenState extends State<ChatScreen> {
       child: Scaffold(
         backgroundColor: const Color.fromRGBO(219, 230, 239, 1.0),
 
-        // AppBar
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> AppBar
         appBar: AppBar(
           backgroundColor: Colors.white70,
           automaticallyImplyLeading: false,
           flexibleSpace: _appBar(),
         ),
 
-        // Body
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Body
         body: Column(
           children: [
             Expanded(

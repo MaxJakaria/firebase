@@ -1,5 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase/Models/message.dart';
 import 'package:firebase/UI/chat_screen.dart';
+import 'package:firebase/UI/uihelper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +19,9 @@ class ChatCard extends StatefulWidget {
 }
 
 class _ChatCardState extends State<ChatCard> {
+  //Last message info (If null --> no message)
+  Message? _message;
+
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context).size;
@@ -25,50 +32,74 @@ class _ChatCardState extends State<ChatCard> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 0.5,
       child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChatScreen(user: widget.user),
-            ),
-          );
-        },
-        child: ListTile(
-          // user profile picture
-          // leading: const CircleAvatar(child: Icon(CupertinoIcons.person),),
-          leading: ClipRRect(
-            borderRadius: BorderRadius.circular(mq.height * 0.3),
-            child: CachedNetworkImage(
-              width: mq.height * 0.058,
-              height: mq.height * 0.058,
-              imageUrl: widget.user.image,
-              fit: BoxFit.cover,
-              // placeholder: (context, url)=> CircularProgressIndicator(),
-              errorWidget: (context, url, error) => const CircleAvatar(
-                child: Icon(CupertinoIcons.person),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatScreen(user: widget.user),
               ),
-            ),
-          ),
-          title: Text(
-            widget.user.name,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          subtitle: Text(
-            widget.user.about,
-            maxLines: 1,
-          ),
+            );
+          },
+          child: StreamBuilder(
+            stream: getLastMessage(),
+            builder: (context,
+                AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+              final data = snapshot.data?.docs;
+              if (data != null) {
+                final list =
+                    data.map((e) => Message.fromJson(e.data())).toList() ?? [];
+                if (list.isNotEmpty) {
+                  _message = list[0];
+                }
+              }
 
-          //Green light
-          trailing: Container(
-            width: 15,
-            height: 15,
-            decoration: BoxDecoration(
-              color: Colors.green[400],
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        ),
-      ),
+              return ListTile(
+                // user profile picture
+                leading: ClipRRect(
+                  borderRadius: BorderRadius.circular(mq.height * 0.3),
+                  child: CachedNetworkImage(
+                    width: mq.height * 0.058,
+                    height: mq.height * 0.058,
+                    imageUrl: widget.user.image,
+                    fit: BoxFit.cover,
+                    // placeholder: (context, url)=> CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => const CircleAvatar(
+                      child: Icon(CupertinoIcons.person),
+                    ),
+                  ),
+                ),
+                title: Text(
+                  widget.user.name,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                  _message == null ? widget.user.about : _message!.msg,
+                  maxLines: 1,
+                ),
+
+                //Green light
+                trailing: Container(
+                  width: 15,
+                  height: 15,
+                  decoration: BoxDecoration(
+                    color: Colors.green[400],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              );
+            },
+          )),
     );
+  }
+
+  //____________________________________________________________________________Get Last Message
+
+  getLastMessage() {
+    return FirebaseFirestore.instance
+        .collection(
+            'chats/${UIhelper.getChatId(widget.user.email, FirebaseAuth.instance.currentUser!.email!)}/messages/')
+        .orderBy('sent', descending: true)
+        .limit(1)
+        .snapshots();
   }
 }

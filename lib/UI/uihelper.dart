@@ -106,10 +106,7 @@ class UIhelper {
     );
   }
 
-  //For getting formatted time milliSecondsSinceEpochs String
-  static String getFormattedTime(
-      {required BuildContext context, required String time}) {
-    final date = DateTime.fromMicrosecondsSinceEpoch(int.parse(time));
-    return TimeOfDay.fromDateTime(date).format(context);
-  }
+  static String getChatId(String user1, String user2) =>
+      user1.hashCode <= user2.hashCode ? '$user1-$user2' : '$user2-$user1';
+
 }
