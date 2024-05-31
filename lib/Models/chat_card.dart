@@ -62,19 +62,47 @@ class _ChatCardState extends State<ChatCard> {
                     height: mq.height * 0.058,
                     imageUrl: widget.user.image,
                     fit: BoxFit.cover,
-                    // placeholder: (context, url)=> CircularProgressIndicator(),
                     errorWidget: (context, url, error) => const CircleAvatar(
                       child: Icon(CupertinoIcons.person),
                     ),
                   ),
                 ),
+
+                //User name
                 title: Text(
                   widget.user.name,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                subtitle: Text(
-                  _message == null ? widget.user.about : _message!.msg,
-                  maxLines: 1,
+
+                //Last Message
+                subtitle: Row(
+                  children: [
+                    _message == null
+                        ? Expanded(
+                            child: Text(
+                              widget.user.about,
+                              maxLines: 1,
+                            ),
+                          )
+                        : _message!.type == Type.image
+                            ? const Row(
+                                children: [
+                                  Icon(Icons.image,
+                                      color: Colors.blue,
+                                      size: 16), // Adjust size as needed
+                                  SizedBox(
+                                      width:
+                                          4), // Add some spacing between icon and text
+                                  Text('Image'),
+                                ],
+                              )
+                            : Expanded(
+                                child: Text(
+                                  _message!.msg,
+                                  maxLines: 1,
+                                ),
+                              ),
+                  ],
                 ),
 
                 //Green light
