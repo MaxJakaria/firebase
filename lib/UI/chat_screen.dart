@@ -179,9 +179,20 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   ),
 
-                  //____________________________________________________________Gallery
+                  //____________________________________________________________Gllery
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () async{
+                      final ImagePicker picker = ImagePicker();
+
+                      //Pick multiple images
+                      final List<XFile> images =
+                          await picker.pickMultiImage( imageQuality: 70);
+
+                      //Uploading and sending image one by one
+                      for(var i in images){
+                        sendChatImage(File(i.path));
+                      }
+                    },
                     icon: const Icon(
                       Icons.image,
                       color: Colors.blueAccent,
@@ -190,6 +201,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
                   //____________________________________________________________Camera
                   IconButton(
+
+                    //Take picture from camera
                     onPressed: () async {
                       final ImagePicker picker = ImagePicker();
                       final XFile? image =
