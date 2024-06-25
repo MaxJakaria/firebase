@@ -79,6 +79,8 @@ class _SignUpPageState extends State<SignUpPage> {
                             'name': name,
                             'email': email,
                             'about': "اَلْحَمْدُ لِلَّٰهِ",
+                            'is_online': '',
+                            'last_active': ''
                           }).then((_) {
                             Navigator.pop(context);
 
