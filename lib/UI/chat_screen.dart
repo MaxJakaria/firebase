@@ -107,52 +107,40 @@ class _ChatScreenState extends State<ChatScreen> {
       padding: EdgeInsets.only(top: mq.height * 0.05),
       child: InkWell(
         onTap: () {},
-        child: StreamBuilder(
-          stream: getUserInfo(widget.user),
-          builder: (context,
-              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-            final data = snapshot.data?.docs;
-            if (data != null) {
-              final list =
-                  data.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
-            }
-
-            return Row(
+        child: Row(
+          children: [
+            IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.arrow_back),
+            ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(mq.height * 0.3),
+              child: CachedNetworkImage(
+                width: mq.height * 0.05,
+                height: mq.height * 0.05,
+                imageUrl: widget.user.image,
+                fit: BoxFit.cover,
+                errorWidget: (context, url, error) => const CircleAvatar(
+                  child: Icon(CupertinoIcons.person),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.arrow_back),
+                Text(
+                  widget.user.name,
+                  style: GoogleFonts.adamina(fontWeight: FontWeight.bold),
                 ),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(mq.height * 0.3),
-                  child: CachedNetworkImage(
-                    width: mq.height * 0.05,
-                    height: mq.height * 0.05,
-                    imageUrl: widget.user.image,
-                    fit: BoxFit.cover,
-                    errorWidget: (context, url, error) => const CircleAvatar(
-                      child: Icon(CupertinoIcons.person),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.user.name,
-                      style: GoogleFonts.adamina(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 2),
-                    Text('last seen available')
-                  ],
-                )
+                const SizedBox(height: 2),
+                const Text('Last seen available')
               ],
-            );
-          },
+            )
+          ],
         ),
       ),
     );
@@ -191,17 +179,17 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   ),
 
-                  //____________________________________________________________Gallery
+                  //____________________________________________________________Gllery
                   IconButton(
-                    onPressed: () async {
+                    onPressed: () async{
                       final ImagePicker picker = ImagePicker();
 
                       //Pick multiple images
                       final List<XFile> images =
-                          await picker.pickMultiImage(imageQuality: 70);
+                          await picker.pickMultiImage( imageQuality: 70);
 
                       //Uploading and sending image one by one
-                      for (var i in images) {
+                      for(var i in images){
                         sendChatImage(File(i.path));
                       }
                     },
@@ -213,11 +201,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
                   //____________________________________________________________Camera
                   IconButton(
+
                     //Take picture from camera
                     onPressed: () async {
                       final ImagePicker picker = ImagePicker();
-                      final XFile? image = await picker.pickImage(
-                          source: ImageSource.camera, imageQuality: 70);
+                      final XFile? image =
+                          await picker.pickImage(source: ImageSource.camera, imageQuality: 70);
                       if (image != null) {
                         sendChatImage(File(image.path));
                       }
@@ -301,24 +290,5 @@ class _ChatScreenState extends State<ChatScreen> {
     //Updating image in firestore database
     final imageUrl = await ref.getDownloadURL();
     await sendMessage(imageUrl, Type.image);
-  }
-
-  //For getting specific user info
-  getUserInfo(ChatUser user) {
-    FirebaseFirestore.instance
-        .collection('user')
-        .where('email', isEqualTo: user.email)
-        .snapshots();
-  }
-
-  //Update online or last active status of user
-  updateActiveStatus(bool isOnline) {
-    FirebaseFirestore.instance
-        .collection('user')
-        .doc(FirebaseAuth.instance.currentUser!.email)
-        .update({
-      'is_online': isOnline,
-      'last_active': DateTime.now().millisecondsSinceEpoch.toString()
-    });
   }
 }

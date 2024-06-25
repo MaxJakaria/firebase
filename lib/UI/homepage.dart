@@ -180,7 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
                           [];
 
-                  if (list.length > 1 ) {
+                  if (list.isNotEmpty) {
                     return ListView.builder(
                       itemCount:
                           _isSearching ? _searchList.length : list.length,
