@@ -15,65 +15,11 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
+class _MyHomePageState extends State<MyHomePage> {
   TextEditingController searchController = TextEditingController();
   bool _isSearching = false;
   List<ChatUser> list = [];
   final List<ChatUser> _searchList = [];
-
-
-
-
-
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    updateActiveStatus(true); // Set user status to "online" when the app is resumed
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    updateActiveStatus(false); // Set user status to "offline" when the app is paused
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      updateActiveStatus(true); // Set user status to "online" in Firestore
-    } else if (state == AppLifecycleState.paused) {
-      updateActiveStatus(false); // Set user status to "offline" in Firestore
-    }
-  }
-
-
-  void updateActiveStatus(bool isOnline) {
-    String onlineStatus = isOnline ? 'true' : 'false'; // Convert bool to string 'true' or 'false'
-    FirebaseFirestore.instance
-        .collection('user')
-        .doc(FirebaseAuth.instance.currentUser!.email)
-        .update({
-      'is_online': onlineStatus,
-      'last_active': DateTime.now().millisecondsSinceEpoch,
-    }).then((value) {
-      print('User online status updated: $isOnline');
-    }).catchError((error) {
-      print('Error updating user online status: $error');
-    });
-  }
-
-
-
-
-
-
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
