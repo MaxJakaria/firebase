@@ -15,11 +15,65 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
   TextEditingController searchController = TextEditingController();
   bool _isSearching = false;
   List<ChatUser> list = [];
   final List<ChatUser> _searchList = [];
+
+
+
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    updateActiveStatus(true); // Set user status to "online" when the app is resumed
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    updateActiveStatus(false); // Set user status to "offline" when the app is paused
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      updateActiveStatus(true); // Set user status to "online" in Firestore
+    } else if (state == AppLifecycleState.paused) {
+      updateActiveStatus(false); // Set user status to "offline" in Firestore
+    }
+  }
+
+
+  void updateActiveStatus(bool isOnline) {
+    String onlineStatus = isOnline ? 'true' : 'false'; // Convert bool to string 'true' or 'false'
+    FirebaseFirestore.instance
+        .collection('user')
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .update({
+      'is_online': onlineStatus,
+      'last_active': DateTime.now().millisecondsSinceEpoch,
+    }).then((value) {
+      print('User online status updated: $isOnline');
+    }).catchError((error) {
+      print('Error updating user online status: $error');
+    });
+  }
+
+
+
+
+
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -56,47 +110,47 @@ class _MyHomePageState extends State<MyHomePage> {
             //____________________________________________________________________ Search Text field and Conditions
             title: _isSearching
                 ? Padding(
-                    padding: EdgeInsets.only(left: mq.width * 0.04),
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'eg. name, email',
-                      ),
-                      autofocus: true,
-                      style: TextStyle(
-                          fontSize: mq.width * 0.045,
-                          letterSpacing: mq.width * 0.0025),
+              padding: EdgeInsets.only(left: mq.width * 0.04),
+              child: TextField(
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'eg. name, email',
+                ),
+                autofocus: true,
+                style: TextStyle(
+                    fontSize: mq.width * 0.045,
+                    letterSpacing: mq.width * 0.0025),
 
-                      //When search changes then update search list
-                      onChanged: (val) {
-                        //______________________________________________________Search Logic
-                        _searchList.clear();
-                        for (var i in list) {
-                          if (i.name
-                                  .toLowerCase()
-                                  .contains(val.toLowerCase()) ||
-                              i.email
-                                  .toLowerCase()
-                                  .contains(val.toLowerCase())) {
-                            _searchList.add(i);
-                          }
-                          setState(() {
-                            _searchList;
-                          });
-                        }
-                      },
-                    ),
-                  )
+                //When search changes then update search list
+                onChanged: (val) {
+                  //______________________________________________________Search Logic
+                  _searchList.clear();
+                  for (var i in list) {
+                    if (i.name
+                        .toLowerCase()
+                        .contains(val.toLowerCase()) ||
+                        i.email
+                            .toLowerCase()
+                            .contains(val.toLowerCase())) {
+                      _searchList.add(i);
+                    }
+                    setState(() {
+                      _searchList;
+                    });
+                  }
+                },
+              ),
+            )
                 : Text(
-                    'Chat',
-                    style: GoogleFonts.acme(),
-                  ),
+              'Chat',
+              style: GoogleFonts.acme(),
+            ),
             actions: [
               //________________________________________________________________________Search button
               IconButton(
                 onPressed: () {
                   setState(
-                    () {
+                        () {
                       _isSearching = !_isSearching;
                     },
                   );
@@ -118,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                     // Find the index of the current user in the list
                     int currentUserIndex = list.indexWhere((user) =>
-                        user.email == FirebaseAuth.instance.currentUser!.email);
+                    user.email == FirebaseAuth.instance.currentUser!.email);
 
                     Navigator.push(
                       context,
@@ -135,12 +189,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                     await FirebaseAuth.instance.signOut().then(
                           (value) => Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const LoginPage(),
-                            ),
-                          ),
-                        );
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ),
+                      ),
+                    );
                   }
                 },
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -183,11 +237,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   if (list.isNotEmpty) {
                     return ListView.builder(
                       itemCount:
-                          _isSearching ? _searchList.length : list.length,
+                      _isSearching ? _searchList.length : list.length,
                       physics: const BouncingScrollPhysics(),
                       itemBuilder: (context, index) {
                         final user =
-                            _isSearching ? _searchList[index] : list[index];
+                        _isSearching ? _searchList[index] : list[index];
                         if (user.email ==
                             FirebaseAuth.instance.currentUser!.email) {
 
@@ -201,10 +255,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   } else {
                     return Center(
                         child: Text(
-                      'No connections found !',
-                      style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.05),
-                    ));
+                          'No connections found !',
+                          style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.width * 0.05),
+                        ));
                   }
               }
             },
