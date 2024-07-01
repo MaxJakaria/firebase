@@ -85,7 +85,7 @@ class _ChatCardState extends State<ChatCard> {
                             ),
                           )
                         : _message!.type == Type.image
-                            ? const Row(
+                            ? Row(
                                 children: [
                                   Icon(Icons.image,
                                       color: Colors.blue,
@@ -93,27 +93,59 @@ class _ChatCardState extends State<ChatCard> {
                                   SizedBox(
                                       width:
                                           4), // Add some spacing between icon and text
-                                  Text('Image'),
+                                  _message!.read.isEmpty &&
+                                          _message!.fromId !=
+                                              FirebaseAuth
+                                                  .instance.currentUser!.email
+                                      ? Text(
+                                          'Image',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                      : Text('Image'),
                                 ],
                               )
                             : Expanded(
-                                child: Text(
-                                  _message!.msg,
-                                  maxLines: 1,
-                                ),
+                                child: _message!.read.isEmpty &&
+                                        _message!.fromId !=
+                                            FirebaseAuth
+                                                .instance.currentUser!.email
+                                    ? Text(
+                                        _message!.msg,
+                                        maxLines: 1,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                      )
+                                    : Text(
+                                        _message!.msg,
+                                        maxLines: 1,
+                                      ),
                               ),
                   ],
                 ),
 
                 //Green light
-                trailing: Container(
-                  width: 15,
-                  height: 15,
-                  decoration: BoxDecoration(
-                    color: Colors.green[400],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                // trailing:  Container(
+                //   width: 15,
+                //   height: 15,
+                //   decoration: BoxDecoration(
+                //     color: Colors.green[400],
+                //     borderRadius: BorderRadius.circular(10),
+                //   ),
+                // ),
+
+                //Unread notification
+                trailing: _message == null
+                    ? null
+                    : _message!.read.isEmpty &&
+                            _message!.fromId !=
+                                FirebaseAuth.instance.currentUser!.email
+                        ? Icon(
+                            Icons.notifications_active,
+                            color: Colors.green,
+                          )
+                        : Text(MyDateUtil.getFormattedTime(
+                            context: context, time: _message!.sent)),
+                // Text(_message!.sent),
               );
             },
           )),

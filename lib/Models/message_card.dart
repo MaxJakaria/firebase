@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase/Models/chat_user.dart';
 import 'package:firebase/Models/message.dart';
+import 'package:firebase/UI/uihelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -44,14 +45,14 @@ class _MessageCardState extends State<MessageCard> {
           'read': DateTime.now().millisecondsSinceEpoch.toString(),
         },
       );
-
-      print('Messagge read updated');
     }
 
     // Parse the sent time
-    DateTime sentTime = DateTime.parse(widget.message.sent);
+    DateTime sentTime =
+        DateTime.fromMillisecondsSinceEpoch(int.parse(widget.message.sent));
+
     // Format the time
-    String formattedTime = DateFormat('HH:mm a').format(sentTime);
+    // String formattedTime = DateFormat('HH:mm a').format(sentTime);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -84,17 +85,17 @@ class _MessageCardState extends State<MessageCard> {
                 :
                 //Show image
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(mq.height * 0.04),
-                  child: CachedNetworkImage(
-                    imageUrl: widget.message.msg,
-                    placeholder: (context, url) =>
-                        const CircularProgressIndicator(),
-                    fit: BoxFit.cover,
-                    errorWidget: (context, url, error) => const Icon(
-                      Icons.image,
-                      size: 70,
+                    borderRadius: BorderRadius.circular(mq.height * 0.04),
+                    child: CachedNetworkImage(
+                      imageUrl: widget.message.msg,
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(),
+                      fit: BoxFit.cover,
+                      errorWidget: (context, url, error) => const Icon(
+                        Icons.image,
+                        size: 70,
+                      ),
                     ),
-                  ),
                   ),
           ),
         ),
@@ -105,7 +106,9 @@ class _MessageCardState extends State<MessageCard> {
           padding:
               EdgeInsets.only(right: mq.width * 0.04, top: mq.width * 0.04),
           child: Text(
-            formattedTime,
+            // formattedTime,
+            MyDateUtil.getFormattedTime(
+                context: context, time: widget.message.sent),
             style: GoogleFonts.adamina(
                 fontSize: mq.width * 0.03, color: Colors.black45),
           ),
@@ -119,9 +122,11 @@ class _MessageCardState extends State<MessageCard> {
     final mq = MediaQuery.of(context).size;
 
     // Parse the sent time
-    DateTime sentTime = DateTime.parse(widget.message.sent);
+    DateTime sentTime =
+        DateTime.fromMillisecondsSinceEpoch(int.parse(widget.message.sent));
+
     // Format the time
-    String formattedTime = DateFormat('HH:mm a').format(sentTime);
+    // String formattedTime = DateFormat('HH:mm a').format(sentTime);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -136,7 +141,9 @@ class _MessageCardState extends State<MessageCard> {
             Padding(
               padding: EdgeInsets.only(top: mq.width * 0.04),
               child: Text(
-                formattedTime,
+                // formattedTime,
+                MyDateUtil.getFormattedTime(
+                    context: context, time: widget.message.sent),
                 style: GoogleFonts.adamina(
                     fontSize: mq.width * 0.03, color: Colors.black45),
               ),

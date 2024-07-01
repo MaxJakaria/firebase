@@ -179,7 +179,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   ),
 
-                  //____________________________________________________________Gllery
+                  //____________________________________________________________Gallery
                   IconButton(
                     onPressed: () async{
                       final ImagePicker picker = ImagePicker();
@@ -242,7 +242,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   sendMessage(String msg, Type type) {
     if (msg.isNotEmpty) {
-      final time = DateTime.now().toIso8601String();
+      final time = DateTime.now().millisecondsSinceEpoch.toString();
 
       final message = Message(
         fromId: FirebaseAuth.instance.currentUser!.email!,
