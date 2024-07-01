@@ -6,7 +6,6 @@ import 'package:firebase/UI/uihelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 
 class MessageCard extends StatefulWidget {
   final Message message;
@@ -48,8 +47,8 @@ class _MessageCardState extends State<MessageCard> {
     }
 
     // Parse the sent time
-    DateTime sentTime =
-        DateTime.fromMillisecondsSinceEpoch(int.parse(widget.message.sent));
+    // DateTime sentTime =
+    //     DateTime.fromMillisecondsSinceEpoch(int.parse(widget.message.sent));
 
     // Format the time
     // String formattedTime = DateFormat('HH:mm a').format(sentTime);
@@ -122,8 +121,8 @@ class _MessageCardState extends State<MessageCard> {
     final mq = MediaQuery.of(context).size;
 
     // Parse the sent time
-    DateTime sentTime =
-        DateTime.fromMillisecondsSinceEpoch(int.parse(widget.message.sent));
+    // DateTime sentTime =
+    //     DateTime.fromMillisecondsSinceEpoch(int.parse(widget.message.sent));
 
     // Format the time
     // String formattedTime = DateFormat('HH:mm a').format(sentTime);

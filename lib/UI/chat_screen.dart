@@ -31,6 +31,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   final TextEditingController textController = TextEditingController();
 
+  // For checking if image is uploading or not?
+  bool _isUploading = false;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -95,6 +98,16 @@ class _ChatScreenState extends State<ChatScreen> {
                 },
               ),
             ),
+
+            //Show Circular when uploading image
+            if (_isUploading)
+              const Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
             _chatInput(),
           ],
         ),
@@ -153,7 +166,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                 lastActive: widget.user.lastActive)
                             : 'Online',
                         style: GoogleFonts.aBeeZee()),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     Container(
                       width: 12,
                       height: 12,
@@ -218,7 +231,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
                       //Uploading and sending image one by one
                       for (var i in images) {
+                        setState(() => _isUploading = true);
                         sendChatImage(File(i.path));
+                        setState(() => _isUploading = false);
                       }
                     },
                     icon: const Icon(
@@ -235,7 +250,9 @@ class _ChatScreenState extends State<ChatScreen> {
                       final XFile? image = await picker.pickImage(
                           source: ImageSource.camera, imageQuality: 70);
                       if (image != null) {
+                        setState(() => _isUploading = true);
                         sendChatImage(File(image.path));
+                        setState(() => _isUploading = false);
                       }
                     },
                     icon: const Icon(
@@ -301,18 +318,14 @@ class _ChatScreenState extends State<ChatScreen> {
   sendChatImage(File file) async {
     //Getting image file extension
     final ext = file.path.split('.').last;
-    print('Extension: $ext');
+    // print('Extension: $ext');
 
     //Storage file reference with path
     final ref = FirebaseStorage.instance.ref().child(
         'image/chat_images/${getChatId(widget.user.email, FirebaseAuth.instance.currentUser!.email!)}/${DateTime.now().millisecondsSinceEpoch}');
 
     //Uploading image
-    await ref
-        .putFile(file, SettableMetadata(contentType: 'image/$ext'))
-        .then((p0) {
-      print('Data Transfer: ${p0.bytesTransferred / 1000} kb');
-    });
+    await ref.putFile(file, SettableMetadata(contentType: 'image/$ext'));
 
     //Updating image in firestore database
     final imageUrl = await ref.getDownloadURL();

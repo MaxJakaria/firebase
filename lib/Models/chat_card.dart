@@ -47,7 +47,7 @@ class _ChatCardState extends State<ChatCard> {
               final data = snapshot.data?.docs;
               if (data != null) {
                 final list =
-                    data.map((e) => Message.fromJson(e.data())).toList() ?? [];
+                    data.map((e) => Message.fromJson(e.data())).toList();
                 if (list.isNotEmpty) {
                   _message = list[0];
                 }
@@ -87,22 +87,22 @@ class _ChatCardState extends State<ChatCard> {
                         : _message!.type == Type.image
                             ? Row(
                                 children: [
-                                  Icon(Icons.image,
+                                  const Icon(Icons.image,
                                       color: Colors.blue,
                                       size: 16), // Adjust size as needed
-                                  SizedBox(
+                                  const SizedBox(
                                       width:
                                           4), // Add some spacing between icon and text
                                   _message!.read.isEmpty &&
                                           _message!.fromId !=
                                               FirebaseAuth
                                                   .instance.currentUser!.email
-                                      ? Text(
+                                      ? const Text(
                                           'Image',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold),
                                         )
-                                      : Text('Image'),
+                                      : const Text('Image'),
                                 ],
                               )
                             : Expanded(
@@ -113,7 +113,7 @@ class _ChatCardState extends State<ChatCard> {
                                     ? Text(
                                         _message!.msg,
                                         maxLines: 1,
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
                                       )
                                     : Text(
                                         _message!.msg,
@@ -139,7 +139,7 @@ class _ChatCardState extends State<ChatCard> {
                     : _message!.read.isEmpty &&
                             _message!.fromId !=
                                 FirebaseAuth.instance.currentUser!.email
-                        ? Icon(
+                        ? const Icon(
                             Icons.notifications_active,
                             color: Colors.green,
                           )
