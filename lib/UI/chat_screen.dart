@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase/Models/chat_user.dart';
 import 'package:firebase/Models/message.dart';
 import 'package:firebase/Models/message_card.dart';
+import 'package:firebase/UI/uihelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -128,6 +129,8 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
             const SizedBox(width: 10),
+
+            //User name
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,7 +140,32 @@ class _ChatScreenState extends State<ChatScreen> {
                   style: GoogleFonts.adamina(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 2),
-                const Text('Last seen available')
+
+                //Last seen time of user
+                Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment.spaceEvenly, // Adjust as needed
+                  children: [
+                    Text(
+                        widget.user.isOnline == 'false'
+                            ? MyDateUtil.getLastActiveTime(
+                                context: context,
+                                lastActive: widget.user.lastActive)
+                            : 'Online',
+                        style: GoogleFonts.aBeeZee()),
+                    SizedBox(width: 5),
+                    Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: widget.user.isOnline != 'false'
+                            ? Colors.green[400]
+                            : Colors.transparent,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ],
+                )
               ],
             )
           ],
@@ -181,15 +209,15 @@ class _ChatScreenState extends State<ChatScreen> {
 
                   //____________________________________________________________Gallery
                   IconButton(
-                    onPressed: () async{
+                    onPressed: () async {
                       final ImagePicker picker = ImagePicker();
 
                       //Pick multiple images
                       final List<XFile> images =
-                          await picker.pickMultiImage( imageQuality: 70);
+                          await picker.pickMultiImage(imageQuality: 70);
 
                       //Uploading and sending image one by one
-                      for(var i in images){
+                      for (var i in images) {
                         sendChatImage(File(i.path));
                       }
                     },
@@ -201,12 +229,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
                   //____________________________________________________________Camera
                   IconButton(
-
                     //Take picture from camera
                     onPressed: () async {
                       final ImagePicker picker = ImagePicker();
-                      final XFile? image =
-                          await picker.pickImage(source: ImageSource.camera, imageQuality: 70);
+                      final XFile? image = await picker.pickImage(
+                          source: ImageSource.camera, imageQuality: 70);
                       if (image != null) {
                         sendChatImage(File(image.path));
                       }

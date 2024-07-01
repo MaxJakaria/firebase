@@ -134,6 +134,7 @@ class MyDateUtil{
     return '${sent.day} ${_getMonth(sent)}';
   }
 
+  //Get month name from month
   static String _getMonth(DateTime date){
     switch (date.month){
       case 1:
@@ -162,5 +163,27 @@ class MyDateUtil{
         return 'Dic';
     }
     return 'NA';
+  }
+
+  static String getLastActiveTime({required BuildContext context, required String lastActive}){
+    final int i = int.tryParse(lastActive) ?? -1;
+
+    //If time is not available then return below statement
+    if(i == -1) return 'Last seen is not available';
+
+    DateTime time = DateTime.fromMicrosecondsSinceEpoch(i);
+    DateTime now = DateTime.now();
+
+    String formattedTime = TimeOfDay.fromDateTime(time).format(context);
+    if(time.day == now.day && time.month == now.month && time.year == now.year){
+      return 'Last seen today at $formattedTime';
+    }
+
+    if((now.difference(time).inHours /24).round() == 1){
+      return 'Last seen yesterday at $formattedTime';
+    }
+
+    String month = _getMonth(time);
+    return 'Last seen on ${time.day} $month on $formattedTime';
   }
 }

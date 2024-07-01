@@ -57,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
         .doc(FirebaseAuth.instance.currentUser!.email)
         .update({
       'is_online': onlineStatus,
-      'last_active': DateTime.now().millisecondsSinceEpoch,
+      'last_active': DateTime.now().millisecondsSinceEpoch.toString(),
     }).then((value) {
       print('User online status updated: $isOnline');
     }).catchError((error) {
