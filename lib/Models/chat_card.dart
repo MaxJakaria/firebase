@@ -143,7 +143,7 @@ class _ChatCardState extends State<ChatCard> {
                             Icons.notifications_active,
                             color: Colors.green,
                           )
-                        : Text(MyDateUtil.getFormattedTime(
+                        : Text(MyDateUtil.getLastMessageTime(
                             context: context, time: _message!.sent)),
                 // Text(_message!.sent),
               );

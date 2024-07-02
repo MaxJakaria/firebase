@@ -116,15 +116,19 @@ class MyDateUtil{
   //Date-time format
   static String getFormattedTime(
       {required BuildContext context, required String time}) {
-    final data = DateTime.fromMicrosecondsSinceEpoch(int.parse(time));
-    return TimeOfDay.fromDateTime(data).format(context);
+    final int i = int.tryParse(time) ?? -1;
+
+    DateTime data = DateTime.fromMillisecondsSinceEpoch(i);
+
+    String formattedTime = TimeOfDay.fromDateTime(data).format(context);
+      return '$formattedTime';
   }
 
   //Get last message time (Used in chat_card)
   static String getLastMessageTime({
     required BuildContext context, required String time
 }){
-    final DateTime sent = DateTime.fromMicrosecondsSinceEpoch(int.parse(time));
+    final DateTime sent = DateTime.fromMillisecondsSinceEpoch(int.parse(time));
     final DateTime now = DateTime.now();
 
     if(now.day == sent.day && now.month == sent.month && now.year == sent.year){
@@ -171,7 +175,7 @@ class MyDateUtil{
     //If time is not available then return below statement
     if(i == -1) return 'Last seen is not available';
 
-    DateTime time = DateTime.fromMicrosecondsSinceEpoch(i);
+    DateTime time = DateTime.fromMillisecondsSinceEpoch(i);
     DateTime now = DateTime.now();
 
     String formattedTime = TimeOfDay.fromDateTime(time).format(context);
