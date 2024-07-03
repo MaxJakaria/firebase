@@ -79,6 +79,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             'name': name,
                             'email': email,
                             'about': "اَلْحَمْدُ لِلَّٰهِ",
+                            'push_token': '',
                           }).then((_) {
                             Navigator.pop(context);
 

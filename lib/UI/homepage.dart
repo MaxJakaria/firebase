@@ -22,10 +22,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
   final List<ChatUser> _searchList = [];
 
 
-
-
-
-
+  //_____________________________________________For online offline
   @override
   void initState() {
     super.initState();
@@ -187,6 +184,15 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
                         child: CircularProgressIndicator(),
                       ),
                     );
+
+                    await FirebaseFirestore.instance
+                        .collection('user')
+                        .doc(FirebaseAuth.instance.currentUser!.email)
+                        .update({
+                      'is_online': 'false',
+                      'last_active': DateTime.now().millisecondsSinceEpoch.toString(),
+                    });
+
                     await FirebaseAuth.instance.signOut().then(
                           (value) => Navigator.pushReplacement(
                         context,
@@ -234,7 +240,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
                       data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
                           [];
 
-                  if (list.isNotEmpty) {
+                  if (list.length > 1) {
                     return ListView.builder(
                       itemCount:
                       _isSearching ? _searchList.length : list.length,

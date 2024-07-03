@@ -1,3 +1,5 @@
+import 'package:firebase/Models/chat_user.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -112,6 +114,8 @@ class UIhelper {
 
 }
 
+
+//_____________________________________________________________MyDateUtil
 class MyDateUtil{
   //Date-time format
   static String getFormattedTime(
@@ -189,5 +193,25 @@ class MyDateUtil{
 
     String month = _getMonth(time);
     return 'Last seen on ${time.day} $month on $formattedTime';
+  }
+}
+
+class API{
+  //For storing self information
+  static late ChatUser me;
+
+  //For accessing firebase messaging (Push Notification)
+  static FirebaseMessaging fmessaging = FirebaseMessaging.instance;
+
+  //For getting firebase messaging token
+  static Future<void> getFirebaseMessageingToken() async {
+
+    await fmessaging.requestPermission();
+    await fmessaging.getToken().then((t){
+      if(t != null){
+
+      }
+    });
+
   }
 }

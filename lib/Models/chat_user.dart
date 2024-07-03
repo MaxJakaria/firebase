@@ -6,6 +6,7 @@ class ChatUser {
     required this.email,
     required this.isOnline,
     required this.lastActive,
+    required this.pushToken,
   });
   late  String image;
   late  String name;
@@ -13,6 +14,7 @@ class ChatUser {
   late  String email;
   late  String isOnline;
   late  String lastActive;
+  late  String pushToken;
 
   ChatUser.fromJson(Map<String, dynamic> json){
     image = json['image'] ?? '';
@@ -21,6 +23,7 @@ class ChatUser {
     email = json['email'] ?? '';
     isOnline = json['is_online'] ?? '';
     lastActive = json['last_active'] ?? '';
+    pushToken = json['push_token'] ?? '';
   }
 
   Map<String, dynamic> toJson() {
@@ -31,6 +34,7 @@ class ChatUser {
     data['email'] = email;
     data['is_online'] = isOnline;
     data['last_active'] = lastActive;
+    data['push_token'] = pushToken;
     return data;
   }
 }
