@@ -117,73 +117,103 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _appBar() {
     final mq = MediaQuery.of(context).size;
-    return Padding(
-      padding: EdgeInsets.only(top: mq.height * 0.05),
-      child: InkWell(
-        onTap: () {},
-        child: Row(
-          children: [
-            IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.arrow_back),
-            ),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(mq.height * 0.3),
-              child: CachedNetworkImage(
-                width: mq.height * 0.05,
-                height: mq.height * 0.05,
-                imageUrl: widget.user.image,
-                fit: BoxFit.cover,
-                errorWidget: (context, url, error) => const CircleAvatar(
-                  child: Icon(CupertinoIcons.person),
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
 
-            //User name
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
+    //Stream Builder
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('user')
+          .doc(widget.user.email)
+          .snapshots(),
+      builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+
+        final userDoc = snapshot.data;
+        final userName = userDoc != null ? userDoc['name'] : '';
+        final userImage = userDoc != null ? userDoc['image'] : '';
+        final isOnline = userDoc != null ? userDoc['is_online'] : 'false';
+        final lastActive = userDoc != null ? userDoc['last_active'] : null;
+
+        return Padding(
+          padding: EdgeInsets.only(top: mq.height * 0.05),
+          child: InkWell(
+            onTap: () {},
+            child: Row(
               children: [
-                Text(
-                  widget.user.name,
-                  style: GoogleFonts.adamina(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 2),
 
-                //Last seen time of user
-                Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.spaceEvenly, // Adjust as needed
+                //Back button
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(Icons.arrow_back),
+                ),
+
+
+                //User Image
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(mq.height * 0.3),
+                  child: CachedNetworkImage(
+                    width: mq.height * 0.05,
+                    height: mq.height * 0.05,
+                    imageUrl: userImage,
+                    fit: BoxFit.cover,
+                    errorWidget: (context, url, error) => CircleAvatar(
+                      child: Icon(Icons.person),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
+
+                    //User name
                     Text(
-                        widget.user.isOnline == 'false'
-                            ? MyDateUtil.getLastActiveTime(
-                                context: context,
-                                lastActive: widget.user.lastActive)
-                            : 'Online',
-                        style: GoogleFonts.aBeeZee()),
-                    const SizedBox(width: 5),
-                    Container(
-                      width: 12,
-                      height: 12,
-                      decoration: BoxDecoration(
-                        color: widget.user.isOnline != 'false'
-                            ? Colors.green[400]
-                            : Colors.transparent,
-                        shape: BoxShape.circle,
-                      ),
+                      userName,
+                      style: GoogleFonts.adamina(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 2),
+
+                    //__________________________________________________________Show Online or last active time
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          isOnline == 'false'
+                              ? MyDateUtil.getLastActiveTime(
+                            context: context,
+                            lastActive: lastActive,
+                          )
+                              : 'Online',
+                          style: GoogleFonts.aBeeZee(),
+                        ),
+                        SizedBox(width: 5),
+                        Container(
+                          width: 12,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: isOnline != 'false'
+                                ? Colors.green[400]
+                                : Colors.transparent,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
-                )
+                ),
               ],
-            )
-          ],
-        ),
-      ),
+            ),
+          ),
+        );
+      },
     );
   }
 
