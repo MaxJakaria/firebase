@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase/Models/chat_user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -196,7 +198,7 @@ class MyDateUtil{
   }
 }
 
-class API{
+class APIs{
   //For storing self information
   static late ChatUser me;
 
@@ -209,9 +211,19 @@ class API{
     await fmessaging.requestPermission();
     await fmessaging.getToken().then((t){
       if(t != null){
-
+        me.pushToken = t;
+        print('push token ${t}');
       }
     });
+  }
 
+  //For getting current user info
+  static Future<void> getSelfInfo() async{
+    await FirebaseFirestore.instance.collection('user').doc(FirebaseAuth.instance.currentUser!.email).get().then((user) async {
+      if(user.exists){
+        me = ChatUser.fromJson(user.data()!);
+        await getFirebaseMessageingToken();
+      }
+    });
   }
 }
