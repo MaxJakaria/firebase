@@ -188,7 +188,7 @@ class _profileScreenState extends State<profileScreen> {
     final mq = MediaQuery.of(context).size;
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.lightGreen[50],
+      backgroundColor: Colors.black54,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(mq.width * 0.2),
