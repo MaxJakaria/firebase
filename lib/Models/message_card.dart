@@ -5,6 +5,7 @@ import 'package:firebase/Models/message.dart';
 import 'package:firebase/UI/uihelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MessageCard extends StatefulWidget {
@@ -231,60 +232,76 @@ class _MessageCardState extends State<MessageCard> {
                   borderRadius: BorderRadius.circular(15)),
             ),
 
-            widget.message.type == Type.text ? // Copy option
-            _OptionItem(
-              icon: Icon(
-                Icons.copy_all_rounded,
-                color: Colors.blue,
-                size: 26,
-              ),
-              name: 'Copy Text',
-              onTap: () {},
-            ) : // Save option
-            _OptionItem(
-              icon: Icon(
-                Icons.cloud_download_rounded,
-                color: Colors.blue,
-                size: 26,
-              ),
-              name: 'Save',
-              onTap: () {},
-            ),
+            widget.message.type == Type.text
+                ? // Copy option
+                _OptionItem(
+                    icon: Icon(
+                      Icons.copy_all_rounded,
+                      color: Colors.blue,
+                      size: 26,
+                    ),
+                    name: 'Copy Text',
+                    onTap: () async {
+                      await Clipboard.setData(
+                              ClipboardData(text: widget.message.msg))
+                          .then((value) {
+                        //For Hiding Bottom Sheet
+                        Navigator.pop(context);
 
-
+                        Dialogs.showSnackbar(context, 'Text Copied!');
+                      });
+                    },
+                  )
+                : // Save option
+                _OptionItem(
+                    icon: Icon(
+                      Icons.cloud_download_rounded,
+                      color: Colors.blue,
+                      size: 26,
+                    ),
+                    name: 'Save',
+                    onTap: () {},
+                  ),
 
             //Divider
-            if(isMe)
-            Divider(
-              color: Colors.white30,
-              endIndent: mq.width * 0.04,
-              indent: mq.width * 0.04,
-            ),
+            if (isMe)
+              Divider(
+                color: Colors.white30,
+                endIndent: mq.width * 0.04,
+                indent: mq.width * 0.04,
+              ),
 
             // Edit option
-            if(widget.message.type == Type.text && isMe)
-            _OptionItem(
-              icon: Icon(
-                Icons.edit,
-                color: Colors.blue,
-                size: 26,
+            if (widget.message.type == Type.text && isMe)
+              _OptionItem(
+                icon: Icon(
+                  Icons.edit,
+                  color: Colors.blue,
+                  size: 26,
+                ),
+                name: 'Edit Message',
+                onTap: () {},
               ),
-              name: 'Edit Message',
-              onTap: () {},
-            ),
-
 
             // Delete option
-            if(isMe)
-            _OptionItem(
-              icon: Icon(
-                Icons.delete_forever,
-                color: Colors.red,
-                size: 26,
+            if (isMe)
+              _OptionItem(
+                icon: Icon(
+                  Icons.delete_forever,
+                  color: Colors.red,
+                  size: 26,
+                ),
+                name: 'Delete Message',
+                onTap: () async {
+                  await API
+                      .deleteMessage(widget.message, widget.user.email,
+                          FirebaseAuth.instance.currentUser!.email!)
+                      .then((value) {
+                        //For hiding bottom sheet
+                        Navigator.pop(context);
+                  });
+                },
               ),
-              name: 'Delete Message',
-              onTap: () {},
-            ),
 
             //Divider
             Divider(
@@ -300,7 +317,8 @@ class _MessageCardState extends State<MessageCard> {
                 color: Colors.blue,
                 size: 26,
               ),
-              name: 'Sent At:',
+              name:
+                  'Sent At: ${MyDateUtil.getLastMessageTime(context: context, time: widget.message.sent)}',
               onTap: () {},
             ),
 
@@ -311,7 +329,9 @@ class _MessageCardState extends State<MessageCard> {
                 color: Colors.green,
                 size: 26,
               ),
-              name: 'Read At:',
+              name: widget.message.read.isEmpty
+                  ? 'Read At: Not seen yet'
+                  : 'Read At: ${MyDateUtil.getLastMessageTime(context: context, time: widget.message.read)}',
               onTap: () {},
             ),
           ],
