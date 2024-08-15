@@ -390,7 +390,7 @@ class _MessageCardState extends State<MessageCard> {
               size: 28,
             ),
             Text(
-              'Update Message',
+              ' Update Message',
               style: TextStyle(color: Colors.white70),
             ),
           ],

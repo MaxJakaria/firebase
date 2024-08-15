@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase/Models/chat_user.dart';
 import 'package:firebase/Models/message.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -241,24 +242,46 @@ class API {
   }
 
   //For Delete Message
-  static Future<void> deleteMessage(Message message, String user1, String user2) async {
+  static Future<void> deleteMessage(
+      Message message, String user1, String user2) async {
     FirebaseFirestore.instance
-        .collection(
-            'chats/${UIhelper.getChatId(user1, user2)}/messages/')
+        .collection('chats/${UIhelper.getChatId(user1, user2)}/messages/')
         .doc(message.sent)
         .delete();
 
-    if(message.type == Type.image) {
+    if (message.type == Type.image) {
       FirebaseStorage.instance.refFromURL(message.msg).delete();
     }
   }
 
   //For Edit Message
-  static Future<void> updateMessage(Message message,String updatedMsg, String user1, String user2) async {
+  static Future<void> updateMessage(
+      Message message, String updatedMsg, String user1, String user2) async {
     FirebaseFirestore.instance
-        .collection(
-        'chats/${UIhelper.getChatId(user1, user2)}/messages/')
+        .collection('chats/${UIhelper.getChatId(user1, user2)}/messages/')
         .doc(message.sent)
         .update({'msg': updatedMsg});
   }
+
+  //For adding an Chat User for conversation
+  /*static Future<bool> addChatUser(String email) async {
+    final data = await FirebaseFirestore.instance
+        .collection('user')
+        .where('email', isEqualTo: email)
+        .get();
+
+    if (data.docs.isNotEmpty &&
+        data.docs.first.id != FirebaseAuth.instance.currentUser!.email) {
+      //User exist
+      FirebaseFirestore.instance
+          .collection('user')
+          .doc(FirebaseAuth.instance.currentUser!.email)
+          .collection('my_users')
+          .doc(data.docs.first.id).set({});
+      return true;
+    } else {
+      //user not exist
+      return false;
+    }
+  }*/
 }

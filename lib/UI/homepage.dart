@@ -3,6 +3,7 @@ import 'package:firebase/Models/chat_card.dart';
 import 'package:firebase/Models/chat_user.dart';
 import 'package:firebase/UI/login_page.dart';
 import 'package:firebase/UI/profile_screen.dart';
+import 'package:firebase/UI/uihelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,25 +16,26 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   TextEditingController searchController = TextEditingController();
   bool _isSearching = false;
   List<ChatUser> list = [];
   final List<ChatUser> _searchList = [];
-
 
   //_____________________________________________For online offline
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    updateActiveStatus(true); // Set user status to "online" when the app is resumed
+    updateActiveStatus(
+        true); // Set user status to "online" when the app is resumed
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    updateActiveStatus(false); // Set user status to "offline" when the app is paused
+    updateActiveStatus(
+        false); // Set user status to "offline" when the app is paused
     super.dispose();
   }
 
@@ -46,9 +48,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
     }
   }
 
-
   void updateActiveStatus(bool isOnline) {
-    String onlineStatus = isOnline ? 'true' : 'false'; // Convert bool to string 'true' or 'false'
+    String onlineStatus =
+        isOnline ? 'true' : 'false'; // Convert bool to string 'true' or 'false'
     FirebaseFirestore.instance
         .collection('user')
         .doc(FirebaseAuth.instance.currentUser!.email)
@@ -61,16 +63,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
       print('Error updating user online status: $error');
     });
   }
-
-
-
-
-
-
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -107,47 +99,47 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
             //____________________________________________________________________ Search Text field and Conditions
             title: _isSearching
                 ? Padding(
-              padding: EdgeInsets.only(left: mq.width * 0.04),
-              child: TextField(
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'eg. name, email',
-                ),
-                autofocus: true,
-                style: TextStyle(
-                    fontSize: mq.width * 0.045,
-                    letterSpacing: mq.width * 0.0025),
+                    padding: EdgeInsets.only(left: mq.width * 0.04),
+                    child: TextField(
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'eg. name, email',
+                      ),
+                      autofocus: true,
+                      style: TextStyle(
+                          fontSize: mq.width * 0.045,
+                          letterSpacing: mq.width * 0.0025),
 
-                //When search changes then update search list
-                onChanged: (val) {
-                  //______________________________________________________Search Logic
-                  _searchList.clear();
-                  for (var i in list) {
-                    if (i.name
-                        .toLowerCase()
-                        .contains(val.toLowerCase()) ||
-                        i.email
-                            .toLowerCase()
-                            .contains(val.toLowerCase())) {
-                      _searchList.add(i);
-                    }
-                    setState(() {
-                      _searchList;
-                    });
-                  }
-                },
-              ),
-            )
+                      //When search changes then update search list
+                      onChanged: (val) {
+                        //______________________________________________________Search Logic
+                        _searchList.clear();
+                        for (var i in list) {
+                          if (i.name
+                                  .toLowerCase()
+                                  .contains(val.toLowerCase()) ||
+                              i.email
+                                  .toLowerCase()
+                                  .contains(val.toLowerCase())) {
+                            _searchList.add(i);
+                          }
+                          setState(() {
+                            _searchList;
+                          });
+                        }
+                      },
+                    ),
+                  )
                 : Text(
-              'Chat',
-              style: GoogleFonts.acme(),
-            ),
+                    'Chat',
+                    style: GoogleFonts.acme(),
+                  ),
             actions: [
               //________________________________________________________________________Search button
               IconButton(
                 onPressed: () {
                   setState(
-                        () {
+                    () {
                       _isSearching = !_isSearching;
                     },
                   );
@@ -169,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
 
                     // Find the index of the current user in the list
                     int currentUserIndex = list.indexWhere((user) =>
-                    user.email == FirebaseAuth.instance.currentUser!.email);
+                        user.email == FirebaseAuth.instance.currentUser!.email);
 
                     Navigator.push(
                       context,
@@ -190,17 +182,18 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
                         .doc(FirebaseAuth.instance.currentUser!.email)
                         .update({
                       'is_online': 'false',
-                      'last_active': DateTime.now().millisecondsSinceEpoch.toString(),
+                      'last_active':
+                          DateTime.now().millisecondsSinceEpoch.toString(),
                     });
 
                     await FirebaseAuth.instance.signOut().then(
                           (value) => Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginPage(),
-                        ),
-                      ),
-                    );
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LoginPage(),
+                            ),
+                          ),
+                        );
                   }
                 },
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -223,6 +216,18 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
             ],
           ),
 
+          //_______________________________________________________________________Floating button to add new user
+          floatingActionButton: Padding(
+            padding: EdgeInsets.only(bottom: 10),
+            child: FloatingActionButton(
+              onPressed: () {
+                _addChatUserDialog();
+              },
+              backgroundColor: Colors.transparent,
+              child: Icon(Icons.person_add_alt_rounded),
+            ),
+          ),
+
           //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> BODY
           body: StreamBuilder(
             stream: FirebaseFirestore.instance.collection('user').snapshots(),
@@ -243,14 +248,13 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
                   if (list.length > 1) {
                     return ListView.builder(
                       itemCount:
-                      _isSearching ? _searchList.length : list.length,
+                          _isSearching ? _searchList.length : list.length,
                       physics: const BouncingScrollPhysics(),
                       itemBuilder: (context, index) {
                         final user =
-                        _isSearching ? _searchList[index] : list[index];
+                            _isSearching ? _searchList[index] : list[index];
                         if (user.email ==
                             FirebaseAuth.instance.currentUser!.email) {
-
                           // Skip displaying the current user's profile card
                           return const SizedBox.shrink();
                         } else {
@@ -261,15 +265,81 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
                   } else {
                     return Center(
                         child: Text(
-                          'No connections found !',
-                          style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.width * 0.05),
-                        ));
+                      'No connections found !',
+                      style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width * 0.05),
+                    ));
                   }
               }
             },
           ),
         ),
+      ),
+    );
+  }
+
+  // _______________________________________________________________________________Dialog for add chat user
+  void _addChatUserDialog() {
+    String email = '';
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        // contentPadding: EdgeInsets.only(left: 24,bottom: 10),
+        backgroundColor: Colors.black54,
+        //Title
+        title: Row(
+          children: [
+            Icon(
+              Icons.person_add_alt_rounded,
+              color: Colors.blue,
+              size: 28,
+            ),
+            Text(
+              ' Add User',
+              style: GoogleFonts.aladin(color: Colors.green),
+            ),
+          ],
+        ),
+
+        //Content
+        content: TextFormField(
+          maxLines: null,
+          onChanged: (value) => email = value,
+          style: TextStyle(color: Colors.white70),
+          decoration: InputDecoration(
+            hintText: 'Email ID...',
+            hintStyle: GoogleFonts.aladin(color: Colors.white54),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+
+        //Actions
+        actions: [
+          MaterialButton(
+            onPressed: () {
+              // Hide Alert dialog
+              Navigator.pop(context);
+            },
+            child: Text(
+              'Cancle',
+              style: TextStyle(color: Colors.green, fontSize: 16),
+            ),
+          ),
+          MaterialButton(
+            onPressed: () {
+              // Hide Alert dialog
+              Navigator.pop(context);
+              // if(email.isNotEmpty)  API.addChatUser(email);
+            },
+            child: Text(
+              'Add',
+              style: TextStyle(color: Colors.green, fontSize: 16),
+            ),
+          ),
+        ],
       ),
     );
   }
