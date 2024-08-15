@@ -241,7 +241,6 @@ class API {
   }
 
   //For Delete Message
-
   static Future<void> deleteMessage(Message message, String user1, String user2) async {
     FirebaseFirestore.instance
         .collection(
@@ -252,5 +251,14 @@ class API {
     if(message.type == Type.image) {
       FirebaseStorage.instance.refFromURL(message.msg).delete();
     }
+  }
+
+  //For Edit Message
+  static Future<void> updateMessage(Message message,String updatedMsg, String user1, String user2) async {
+    FirebaseFirestore.instance
+        .collection(
+        'chats/${UIhelper.getChatId(user1, user2)}/messages/')
+        .doc(message.sent)
+        .update({'msg': updatedMsg});
   }
 }

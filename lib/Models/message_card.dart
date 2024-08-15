@@ -237,7 +237,7 @@ class _MessageCardState extends State<MessageCard> {
             widget.message.type == Type.text
                 ?
 
-            // _____________________________________________________________________________Copy option
+                // _____________________________________________________________________________Copy option
                 _OptionItem(
                     icon: const Icon(
                       Icons.copy_all_rounded,
@@ -257,7 +257,7 @@ class _MessageCardState extends State<MessageCard> {
                     },
                   )
                 :
-            //_________________________________________________________________________Save option
+                //_________________________________________________________________________Save option
                 _OptionItem(
                     icon: const Icon(
                       Icons.cloud_download_rounded,
@@ -265,21 +265,24 @@ class _MessageCardState extends State<MessageCard> {
                       size: 26,
                     ),
                     name: 'Save',
-                    onTap: () async{
+                    onTap: () async {
                       try {
                         //For Hiding Bottom Sheet
                         Navigator.pop(context);
 
                         // Download the image
-                        var response = await http.get(Uri.parse(widget.message.msg));
+                        var response =
+                            await http.get(Uri.parse(widget.message.msg));
 
                         if (response.statusCode == 200) {
                           // Save the image to the gallery
-                          await ImageGallerySaver.saveImage(Uint8List.fromList(response.bodyBytes));
+                          await ImageGallerySaver.saveImage(
+                              Uint8List.fromList(response.bodyBytes));
 
                           Dialogs.showSnackbar(context, 'Saved image!');
                         } else {
-                          print("Error downloading image: ${response.statusCode}");
+                          print(
+                              "Error downloading image: ${response.statusCode}");
                         }
                       } catch (e) {
                         print("Error saving image: $e");
@@ -304,7 +307,11 @@ class _MessageCardState extends State<MessageCard> {
                   size: 26,
                 ),
                 name: 'Edit Message',
-                onTap: () {},
+                onTap: () {
+                  //For hiding bottom sheet
+                  Navigator.pop(context);
+                  _showMessageUpdateDialog();
+                },
               ),
 
             // Delete option
@@ -321,8 +328,8 @@ class _MessageCardState extends State<MessageCard> {
                       .deleteMessage(widget.message, widget.user.email,
                           FirebaseAuth.instance.currentUser!.email!)
                       .then((value) {
-                        //For hiding bottom sheet
-                        Navigator.pop(context);
+                    //For hiding bottom sheet
+                    Navigator.pop(context);
                   });
                 },
               ),
@@ -361,6 +368,73 @@ class _MessageCardState extends State<MessageCard> {
           ],
         );
       },
+    );
+  }
+
+  // Dialog for updating message content
+  void _showMessageUpdateDialog() {
+    String updatedMsg = widget.message.msg;
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+
+        // contentPadding: EdgeInsets.only(left: 24,bottom: 10),
+        backgroundColor: Colors.black54,
+        //Title
+        title: Row(
+          children: [
+            Icon(
+              Icons.message,
+              color: Colors.blue,
+              size: 28,
+            ),
+            Text(
+              'Update Message',
+              style: TextStyle(color: Colors.white70),
+            ),
+          ],
+        ),
+
+        //Content
+        content: TextFormField(
+          initialValue: updatedMsg,
+          maxLines: null,
+          onChanged: (value) => updatedMsg = value,
+          style: TextStyle(color: Colors.white70),
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+
+        //Actions
+        actions: [
+          MaterialButton(
+            onPressed: () {
+              // Hide Alert dialog
+              Navigator.pop(context);
+            },
+            child: Text(
+              'Cancle',
+              style: TextStyle(color: Colors.white70, fontSize: 16),
+            ),
+          ),
+          MaterialButton(
+            onPressed: () {
+              // Hide Alert dialog
+              Navigator.pop(context);
+              API.updateMessage(widget.message, updatedMsg,widget.user.email,
+                  FirebaseAuth.instance.currentUser!.email!);
+            },
+            child: Text(
+              'Update',
+              style: TextStyle(color: Colors.white70, fontSize: 16),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
