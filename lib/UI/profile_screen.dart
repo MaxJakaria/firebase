@@ -191,73 +191,114 @@ class _profileScreenState extends State<profileScreen> {
       backgroundColor: Colors.black54,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(mq.width * 0.2),
-          topRight: Radius.circular(mq.width * 0.2),
+          topLeft: Radius.circular(mq.width * 0.05),
+          topRight: Radius.circular(mq.width * 0.05),
         ),
       ),
       builder: (_) {
         return ListView(
           shrinkWrap: true,
           padding:
-              EdgeInsets.only(top: mq.width * 0.02, bottom: mq.width * 0.03),
+              EdgeInsets.only(top: mq.width * 0.015, bottom: mq.width * 0.015),
           children: [
+            // Container for upper line
+            Container(
+              height: 4,
+              margin: EdgeInsets.symmetric(
+                  vertical: mq.height * 0.015, horizontal: mq.width * 0.4),
+              decoration: BoxDecoration(
+                  color: Colors.blueGrey[700],
+                  borderRadius: BorderRadius.circular(15)),
+            ),
+
             Text(
               'Pic Profile Picture',
               textAlign: TextAlign.center,
               style: GoogleFonts.aladin(
                   fontSize: mq.width * .07,
-                  color: Colors.green,
+                  color: Colors.white70,
                   fontWeight: FontWeight.w200),
             ),
+
+            //Divider
+            Divider(
+              color: Colors.white30,
+              endIndent: mq.width * 0.15,
+              indent: mq.width * 0.15,
+            ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                //_____________________________________________________________________ Gallery for pic an image
-                IconButton(
-                  onPressed: () async {
-                    final ImagePicker picker = ImagePicker();
-                    final XFile? image =
-                        await picker.pickImage(source: ImageSource.gallery);
-                    if (image != null) {
-                      setState(() {
-                        _image = image.path;
-                      });
+                Column(
+                  children: [
+                    //_____________________________________________________________________ Gallery for pic an image
+                    IconButton(
+                      onPressed: () async {
+                        final ImagePicker picker = ImagePicker();
+                        final XFile? image =
+                            await picker.pickImage(source: ImageSource.gallery);
+                        if (image != null) {
+                          setState(() {
+                            _image = image.path;
+                          });
 
-                      updateProfilePic(File(_image!));
-                      Navigator.pop(context);
-                    }
-                  },
-                  icon: Icon(
-                    Icons.add_photo_alternate_rounded,
-                    size: mq.width * 0.2,
-                    color: Colors.blue[700],
-                  ),
+                          updateProfilePic(File(_image!));
+                          Navigator.pop(context);
+                        }
+                      },
+                      icon: Icon(
+                        Icons.photo_camera_back,
+                        size: mq.width * 0.15,
+                        color: Colors.green[800],
+                      ),
+                    ),
+
+                    Text(
+                      'Gallery',
+                      style: GoogleFonts.aladin(
+                          fontSize: mq.width * .05,
+                          color: Colors.white70,
+                          fontWeight: FontWeight.w200),
+                    ),
+                  ],
                 ),
+                Column(
+                  children: [
+                    //____________________________________________________________________Camera for pick an image
+                    IconButton(
+                      onPressed: () async {
+                        final ImagePicker picker = ImagePicker();
 
-                //____________________________________________________________________Camera for pick an image
-                IconButton(
-                  onPressed: () async {
-                    final ImagePicker picker = ImagePicker();
+                        //Pick an image
+                        final XFile? image =
+                            await picker.pickImage(source: ImageSource.camera);
+                        if (image != null) {
+                          setState(() {
+                            _image = image.path;
+                          });
 
-                    //Pick an image
-                    final XFile? image =
-                        await picker.pickImage(source: ImageSource.camera);
-                    if (image != null) {
-                      setState(() {
-                        _image = image.path;
-                      });
+                          updateProfilePic(File(_image!));
+                          //For hiding bottom shit
+                          Navigator.pop(context);
+                        }
+                      },
+                      icon: Icon(
+                        Icons.camera_outlined,
+                        size: mq.width * 0.15,
+                        color: Colors.green[800],
+                      ),
+                    ),
 
-                      updateProfilePic(File(_image!));
-                      //For hiding bottom shit
-                      Navigator.pop(context);
-                    }
-                  },
-                  icon: Icon(
-                    Icons.add_a_photo_rounded,
-                    size: mq.width * 0.2,
-                    color: Colors.blue[700],
-                  ),
-                )
+                    Text(
+                      'Camera',
+                      style: GoogleFonts.aladin(
+                          fontSize: mq.width * .05,
+                          color: Colors.white70,
+                          fontWeight: FontWeight.w200),
+                    ),
+                  ],
+                ),
               ],
             )
           ],

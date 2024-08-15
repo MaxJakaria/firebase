@@ -7,6 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:http/http.dart' as http;
 
 class MessageCard extends StatefulWidget {
   final Message message;
@@ -217,7 +219,7 @@ class _MessageCardState extends State<MessageCard> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.black54,
-      shape: ContinuousRectangleBorder(),
+      shape: const ContinuousRectangleBorder(),
       builder: (_) {
         return ListView(
           shrinkWrap: true,
@@ -233,9 +235,11 @@ class _MessageCardState extends State<MessageCard> {
             ),
 
             widget.message.type == Type.text
-                ? // Copy option
+                ?
+
+            // _____________________________________________________________________________Copy option
                 _OptionItem(
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.copy_all_rounded,
                       color: Colors.blue,
                       size: 26,
@@ -252,15 +256,35 @@ class _MessageCardState extends State<MessageCard> {
                       });
                     },
                   )
-                : // Save option
+                :
+            //_________________________________________________________________________Save option
                 _OptionItem(
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.cloud_download_rounded,
                       color: Colors.blue,
                       size: 26,
                     ),
                     name: 'Save',
-                    onTap: () {},
+                    onTap: () async{
+                      try {
+                        //For Hiding Bottom Sheet
+                        Navigator.pop(context);
+
+                        // Download the image
+                        var response = await http.get(Uri.parse(widget.message.msg));
+
+                        if (response.statusCode == 200) {
+                          // Save the image to the gallery
+                          await ImageGallerySaver.saveImage(Uint8List.fromList(response.bodyBytes));
+
+                          Dialogs.showSnackbar(context, 'Saved image!');
+                        } else {
+                          print("Error downloading image: ${response.statusCode}");
+                        }
+                      } catch (e) {
+                        print("Error saving image: $e");
+                      }
+                    },
                   ),
 
             //Divider
@@ -271,10 +295,10 @@ class _MessageCardState extends State<MessageCard> {
                 indent: mq.width * 0.04,
               ),
 
-            // Edit option
+            // _______________________________________________________________________Edit option
             if (widget.message.type == Type.text && isMe)
               _OptionItem(
-                icon: Icon(
+                icon: const Icon(
                   Icons.edit,
                   color: Colors.blue,
                   size: 26,
@@ -286,7 +310,7 @@ class _MessageCardState extends State<MessageCard> {
             // Delete option
             if (isMe)
               _OptionItem(
-                icon: Icon(
+                icon: const Icon(
                   Icons.delete_forever,
                   color: Colors.red,
                   size: 26,
@@ -310,9 +334,9 @@ class _MessageCardState extends State<MessageCard> {
               indent: mq.width * 0.04,
             ),
 
-            // Sent time
+            // _______________________________________________________________________________________________Sent time
             _OptionItem(
-              icon: Icon(
+              icon: const Icon(
                 Icons.remove_red_eye,
                 color: Colors.blue,
                 size: 26,
@@ -322,9 +346,9 @@ class _MessageCardState extends State<MessageCard> {
               onTap: () {},
             ),
 
-            // Read time
+            //________________________________________________________________________________________________Read time
             _OptionItem(
-              icon: Icon(
+              icon: const Icon(
                 Icons.remove_red_eye,
                 color: Colors.green,
                 size: 26,
@@ -364,7 +388,7 @@ class _OptionItem extends StatelessWidget {
             Flexible(
                 child: Text(
               '   $name',
-              style: TextStyle(color: Colors.white70),
+              style: const TextStyle(color: Colors.white70),
             ))
           ],
         ),

@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase/Models/chat_user.dart';
 import 'package:firebase/Models/message.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -126,7 +125,7 @@ class MyDateUtil {
     DateTime data = DateTime.fromMillisecondsSinceEpoch(i);
 
     String formattedTime = TimeOfDay.fromDateTime(data).format(context);
-    return '$formattedTime';
+    return formattedTime;
   }
 
   //Get last message time (Used in chat_card)
@@ -250,7 +249,8 @@ class API {
         .doc(message.sent)
         .delete();
 
-    if(message.type == Type.image)
-    FirebaseStorage.instance.refFromURL(message.msg).delete();
+    if(message.type == Type.image) {
+      FirebaseStorage.instance.refFromURL(message.msg).delete();
+    }
   }
 }

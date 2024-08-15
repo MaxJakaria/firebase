@@ -8,7 +8,6 @@ import 'package:firebase/Models/message_card.dart';
 import 'package:firebase/UI/uihelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -126,7 +125,7 @@ class _ChatScreenState extends State<ChatScreen> {
           .snapshots(),
       builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
@@ -150,7 +149,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back),
                 ),
 
 
@@ -162,12 +161,12 @@ class _ChatScreenState extends State<ChatScreen> {
                     height: mq.height * 0.05,
                     imageUrl: userImage,
                     fit: BoxFit.cover,
-                    errorWidget: (context, url, error) => CircleAvatar(
+                    errorWidget: (context, url, error) => const CircleAvatar(
                       child: Icon(Icons.person),
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,7 +178,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       userName,
                       style: GoogleFonts.adamina(fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 2),
+                    const SizedBox(height: 2),
 
                     //__________________________________________________________Show Online or last active time
                     Row(
@@ -194,7 +193,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               : 'Online',
                           style: GoogleFonts.aBeeZee(),
                         ),
-                        SizedBox(width: 5),
+                        const SizedBox(width: 5),
                         Container(
                           width: 12,
                           height: 12,
