@@ -264,14 +264,18 @@ class API {
   }
 
   //For adding an Chat User for conversation
-  /*static Future<bool> addChatUser(String email) async {
+  static Future<bool> addChatUser(String email) async {
     final data = await FirebaseFirestore.instance
         .collection('user')
         .where('email', isEqualTo: email)
         .get();
 
-    if (data.docs.isNotEmpty &&
-        data.docs.first.id != FirebaseAuth.instance.currentUser!.email) {
+    // print('data: ${data.docs}');
+
+    if (data.docs.isNotEmpty && data.docs.first.id != FirebaseAuth.instance.currentUser!.email) {
+
+      // print('user exist: ${data.docs.first.data()}');
+
       //User exist
       FirebaseFirestore.instance
           .collection('user')
@@ -283,5 +287,5 @@ class API {
       //user not exist
       return false;
     }
-  }*/
+  }
 }

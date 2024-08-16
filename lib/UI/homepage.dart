@@ -218,13 +218,13 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
           //_______________________________________________________________________Floating button to add new user
           floatingActionButton: Padding(
-            padding: EdgeInsets.only(bottom: 10),
+            padding: const EdgeInsets.only(bottom: 10),
             child: FloatingActionButton(
               onPressed: () {
                 _addChatUserDialog();
               },
               backgroundColor: Colors.transparent,
-              child: Icon(Icons.person_add_alt_rounded),
+              child: const Icon(Icons.person_add_alt_rounded),
             ),
           ),
 
@@ -290,7 +290,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         //Title
         title: Row(
           children: [
-            Icon(
+            const Icon(
               Icons.person_add_alt_rounded,
               color: Colors.blue,
               size: 28,
@@ -306,7 +306,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         content: TextFormField(
           maxLines: null,
           onChanged: (value) => email = value,
-          style: TextStyle(color: Colors.white70),
+          style: const TextStyle(color: Colors.white70),
           decoration: InputDecoration(
             hintText: 'Email ID...',
             hintStyle: GoogleFonts.aladin(color: Colors.white54),
@@ -323,18 +323,24 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               // Hide Alert dialog
               Navigator.pop(context);
             },
-            child: Text(
+            child: const Text(
               'Cancle',
               style: TextStyle(color: Colors.green, fontSize: 16),
             ),
           ),
           MaterialButton(
-            onPressed: () {
+            onPressed: () async {
               // Hide Alert dialog
               Navigator.pop(context);
-              // if(email.isNotEmpty)  API.addChatUser(email);
+              if(email.isNotEmpty) {
+                await API.addChatUser(email).then((value) {
+                  if(!value){
+                    Dialogs.showSnackbar(context, 'User does not Exists!');
+                  }
+                });
+              }
             },
-            child: Text(
+            child: const Text(
               'Add',
               style: TextStyle(color: Colors.green, fontSize: 16),
             ),

@@ -382,7 +382,7 @@ class _MessageCardState extends State<MessageCard> {
         // contentPadding: EdgeInsets.only(left: 24,bottom: 10),
         backgroundColor: Colors.black54,
         //Title
-        title: Row(
+        title: const Row(
           children: [
             Icon(
               Icons.message,
@@ -401,7 +401,7 @@ class _MessageCardState extends State<MessageCard> {
           initialValue: updatedMsg,
           maxLines: null,
           onChanged: (value) => updatedMsg = value,
-          style: TextStyle(color: Colors.white70),
+          style: const TextStyle(color: Colors.white70),
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
@@ -416,7 +416,7 @@ class _MessageCardState extends State<MessageCard> {
               // Hide Alert dialog
               Navigator.pop(context);
             },
-            child: Text(
+            child: const Text(
               'Cancle',
               style: TextStyle(color: Colors.white70, fontSize: 16),
             ),
@@ -428,7 +428,7 @@ class _MessageCardState extends State<MessageCard> {
               API.updateMessage(widget.message, updatedMsg,widget.user.email,
                   FirebaseAuth.instance.currentUser!.email!);
             },
-            child: Text(
+            child: const Text(
               'Update',
               style: TextStyle(color: Colors.white70, fontSize: 16),
             ),
