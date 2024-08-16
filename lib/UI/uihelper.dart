@@ -272,8 +272,8 @@ class API {
 
     // print('data: ${data.docs}');
 
-    if (data.docs.isNotEmpty && data.docs.first.id != FirebaseAuth.instance.currentUser!.email) {
-
+    if (data.docs.isNotEmpty &&
+        data.docs.first.id != FirebaseAuth.instance.currentUser!.email) {
       // print('user exist: ${data.docs.first.data()}');
 
       //User exist
@@ -281,11 +281,39 @@ class API {
           .collection('user')
           .doc(FirebaseAuth.instance.currentUser!.email)
           .collection('my_users')
-          .doc(data.docs.first.id).set({});
+          .doc(data.docs.first.id)
+          .set({});
+
+      FirebaseFirestore.instance
+          .collection('user')
+          .doc(data.docs.first.id)
+          .collection('my_users')
+          .doc(FirebaseAuth.instance.currentUser!.email)
+          .set({});
       return true;
     } else {
       //user not exist
       return false;
     }
+  }
+
+  // For getting id's known users from firestore database
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getMyUserId() {
+    return FirebaseFirestore.instance
+        .collection('user')
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .collection('my_users')
+        .snapshots();
+  }
+
+  // For getting all users from firestore database
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers(
+      List<String> userIds) {
+    // print('userIds: ${userIds}');
+
+    return FirebaseFirestore.instance
+        .collection('user')
+        .where('email', whereIn: userIds)
+        .snapshots();
   }
 }
