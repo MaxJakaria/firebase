@@ -216,6 +216,33 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  //_____________________________________________________________________________Chat Input
+
+
+
+  FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() {
+      setState(() {
+        _isFocused = _focusNode.hasFocus;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+
+
+
+
   Widget _chatInput() {
     final mq = MediaQuery.of(context).size;
     return Padding(
@@ -229,23 +256,23 @@ class _ChatScreenState extends State<ChatScreen> {
                   borderRadius: BorderRadius.circular(mq.width * 0.05)),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.speaker_notes_outlined,
-                      color: Colors.black54,
-                    ),
-                  ),
-                  //____________________________________________________________TextField
+
+                  //_______________________________________________________________________TextField
                   Expanded(
                     child: TextField(
                       controller: textController,
                       keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      decoration: const InputDecoration(
+                      maxLines: 5,
+                      minLines: 1,
+                      focusNode: _focusNode,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.only(left: 15,top: 10,bottom: 10),
+                          prefixIcon: _isFocused ? null :Icon(Icons.textsms_rounded,color: Colors.green),
                           border: InputBorder.none,
-                          hintText: 'Type a message...',
-                          hintStyle: TextStyle(fontWeight: FontWeight.w300)),
+                          hintText: _isFocused ? null :'Type something...',
+                          hintStyle: TextStyle(fontWeight: FontWeight.normal),
+                      ),
+                      style: TextStyle(fontSize: 17),
                     ),
                   ),
 
@@ -301,7 +328,7 @@ class _ChatScreenState extends State<ChatScreen> {
             minWidth: 0,
             color: Colors.white70,
             child: const Padding(
-              padding: EdgeInsets.only(top: 10, right: 5, left: 10, bottom: 8),
+              padding: EdgeInsets.only(top: 10, right: 5, bottom: 8),
               child: Icon(
                 Icons.send,
                 color: Colors.blueAccent,

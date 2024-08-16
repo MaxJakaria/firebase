@@ -306,14 +306,19 @@ class API {
         .snapshots();
   }
 
-  // For getting all users from firestore database
+
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers(
       List<String> userIds) {
-    // print('userIds: ${userIds}');
+    if (userIds.isEmpty) {
+      // Handle empty list case, e.g., return a stream with no results or display a message
+      return Stream.empty(); // Return an empty stream if no users to query
+    }
 
+    // Proceed with the Firestore query if userIds is not empty
     return FirebaseFirestore.instance
         .collection('user')
         .where('email', whereIn: userIds)
         .snapshots();
   }
+
 }

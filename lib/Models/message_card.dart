@@ -66,18 +66,19 @@ class _MessageCardState extends State<MessageCard> {
       children: [
         Flexible(
           child: Container(
-            padding: EdgeInsets.all(widget.message.type == Type.text
-                ? mq.width * 0.025
-                : mq.width * 0.02),
+            padding: EdgeInsets.all(
+                widget.message.type == Type.text ? mq.width * 0.02 : 0),
             margin: EdgeInsets.symmetric(
                 horizontal: mq.width * 0.04, vertical: mq.height * 0.01),
             decoration: BoxDecoration(
               color: const Color.fromARGB(223, 202, 232, 206),
               border: Border.all(color: Colors.green),
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(mq.width * 0.1),
-                  topRight: Radius.circular(mq.width * 0.1),
-                  bottomRight: Radius.circular(mq.width * 0.1)),
+              borderRadius: widget.message.type == Type.text
+                  ? BorderRadius.only(
+                      topLeft: Radius.circular(mq.width * 0.05),
+                      topRight: Radius.circular(mq.width * 0.05),
+                      bottomRight: Radius.circular(mq.width * 0.05))
+                  : BorderRadius.circular(mq.width * 0.04),
             ),
 
             //__________________________________________________________________ Text
@@ -87,12 +88,12 @@ class _MessageCardState extends State<MessageCard> {
                 //Show Text
                 Text(
                     widget.message.msg,
-                    style: GoogleFonts.acme(fontSize: mq.width * 0.04),
+                    style: GoogleFonts.acme(fontSize: mq.width * 0.045),
                   )
                 :
                 //Show image
                 ClipRRect(
-                    borderRadius: BorderRadius.circular(mq.height * 0.04),
+                    borderRadius: BorderRadius.circular(mq.width * 0.04),
                     child: CachedNetworkImage(
                       imageUrl: widget.message.msg,
                       placeholder: (context, url) =>
@@ -169,18 +170,19 @@ class _MessageCardState extends State<MessageCard> {
         ),
         Flexible(
           child: Container(
-            padding: EdgeInsets.all(widget.message.type == Type.text
-                ? mq.width * 0.025
-                : mq.width * 0.02),
+            padding: EdgeInsets.all(
+                widget.message.type == Type.text ? mq.width * 0.025 : 0),
             margin: EdgeInsets.symmetric(
                 horizontal: mq.width * 0.04, vertical: mq.height * 0.01),
             decoration: BoxDecoration(
               color: const Color.fromRGBO(210, 228, 245, 1.0),
               border: Border.all(color: Colors.blueGrey),
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(mq.width * 0.1),
-                  topRight: Radius.circular(mq.width * 0.1),
-                  bottomLeft: Radius.circular(mq.width * 0.1)),
+              borderRadius: widget.message.type == Type.text
+                  ? BorderRadius.only(
+                      topLeft: Radius.circular(mq.width * 0.05),
+                      topRight: Radius.circular(mq.width * 0.05),
+                      bottomLeft: Radius.circular(mq.width * 0.05))
+                  : BorderRadius.circular(mq.width * 0.04),
             ),
 
             //__________________________________________________________________ Text
@@ -189,12 +191,12 @@ class _MessageCardState extends State<MessageCard> {
                 //Show Text
                 Text(
                     widget.message.msg,
-                    style: GoogleFonts.acme(fontSize: mq.width * 0.04),
+                    style: GoogleFonts.acme(fontSize: mq.width * 0.045),
                   )
                 :
                 //Show image
                 ClipRRect(
-                    borderRadius: BorderRadius.circular(mq.height * 0.04),
+                    borderRadius: BorderRadius.circular(mq.width * 0.04),
                     child: CachedNetworkImage(
                       imageUrl: widget.message.msg,
                       placeholder: (context, url) =>
@@ -378,7 +380,6 @@ class _MessageCardState extends State<MessageCard> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-
         // contentPadding: EdgeInsets.only(left: 24,bottom: 10),
         backgroundColor: Colors.black54,
         //Title
@@ -425,7 +426,7 @@ class _MessageCardState extends State<MessageCard> {
             onPressed: () {
               // Hide Alert dialog
               Navigator.pop(context);
-              API.updateMessage(widget.message, updatedMsg,widget.user.email,
+              API.updateMessage(widget.message, updatedMsg, widget.user.email,
                   FirebaseAuth.instance.currentUser!.email!);
             },
             child: const Text(
