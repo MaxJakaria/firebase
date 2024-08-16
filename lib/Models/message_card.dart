@@ -78,7 +78,7 @@ class _MessageCardState extends State<MessageCard> {
                       topLeft: Radius.circular(mq.width * 0.05),
                       topRight: Radius.circular(mq.width * 0.05),
                       bottomRight: Radius.circular(mq.width * 0.05))
-                  : BorderRadius.circular(mq.width * 0.04),
+                  : BorderRadius.circular(mq.width * 0.043),
             ),
 
             //__________________________________________________________________ Text
@@ -182,7 +182,7 @@ class _MessageCardState extends State<MessageCard> {
                       topLeft: Radius.circular(mq.width * 0.05),
                       topRight: Radius.circular(mq.width * 0.05),
                       bottomLeft: Radius.circular(mq.width * 0.05))
-                  : BorderRadius.circular(mq.width * 0.04),
+                  : BorderRadius.circular(mq.width * 0.043),
             ),
 
             //__________________________________________________________________ Text
