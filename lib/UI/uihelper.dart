@@ -299,6 +299,15 @@ class API {
 
   // For getting id's known users from firestore database
   static Stream<QuerySnapshot<Map<String, dynamic>>> getMyUserId() {
+
+    // For set my id in my_user section
+    FirebaseFirestore.instance
+        .collection('user')
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .collection('my_users')
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .set({});
+
     return FirebaseFirestore.instance
         .collection('user')
         .doc(FirebaseAuth.instance.currentUser!.email)
