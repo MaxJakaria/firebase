@@ -220,7 +220,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
 
 
-  FocusNode _focusNode = FocusNode();
+  final FocusNode _focusNode = FocusNode();
   bool _isFocused = false;
 
   @override
@@ -266,13 +266,13 @@ class _ChatScreenState extends State<ChatScreen> {
                       minLines: 1,
                       focusNode: _focusNode,
                       decoration: InputDecoration(
-                        contentPadding: EdgeInsets.only(left: 15,top: 10,bottom: 10),
-                          prefixIcon: _isFocused ? null :Icon(Icons.textsms_rounded,color: Colors.green),
+                        contentPadding: const EdgeInsets.only(left: 15,top: 10,bottom: 10),
+                          prefixIcon: _isFocused ? null :const Icon(Icons.textsms_rounded,color: Colors.green),
                           border: InputBorder.none,
                           hintText: _isFocused ? null :'Type something...',
-                          hintStyle: TextStyle(fontWeight: FontWeight.normal),
+                          hintStyle: const TextStyle(fontWeight: FontWeight.normal),
                       ),
-                      style: TextStyle(fontSize: 17),
+                      style: const TextStyle(fontSize: 17),
                     ),
                   ),
 

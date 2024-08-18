@@ -65,6 +65,7 @@ dependencies:
 
   # For saving image/others
   image_gallery_saver: ^2.0.3
+  firebase_app_check: ^0.2.2+7
 
 
 dev_dependencies:

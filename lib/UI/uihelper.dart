@@ -320,7 +320,7 @@ class API {
       List<String> userIds) {
     if (userIds.isEmpty) {
       // Handle empty list case, e.g., return a stream with no results or display a message
-      return Stream.empty(); // Return an empty stream if no users to query
+      return const Stream.empty(); // Return an empty stream if no users to query
     }
 
     // Proceed with the Firestore query if userIds is not empty

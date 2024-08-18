@@ -1,4 +1,5 @@
 import 'package:firebase/Check/check_user.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -6,7 +7,16 @@ import 'firebase_options.dart';
 void main()async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.android,
+  );
+
+  // Activate app check after initialization, but before
+  // usage of any Firebase services.
+  await FirebaseAppCheck.instance
+  // Your personal reCaptcha public key goes here:
+      .activate(
+    androidProvider: AndroidProvider.debug,
+
   );
   runApp(const MyApp());
 }

@@ -27,14 +27,17 @@ class _LoginPageState extends State<LoginPage> {
       try {
         userCredential = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: email, password: password)
-            .then(
-              (value) => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const MyHomePage(),
-                ),
-              ),
-            );
+            .then((UserCredential userCredential) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MyHomePage(),
+            ),
+          );
+        }).catchError((error) {
+          print("Sign-in error: $error");
+        });
+
       } on FirebaseException {
         return UIhelper.customAlertBox(context, 'Wrong Information !');
       }
@@ -70,70 +73,74 @@ class _LoginPageState extends State<LoginPage> {
           ),
 
           //____________________________________________________________________Body
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              UIhelper.customTextField(
-                  emailController, "Email", Icons.email, false, context),
-              CustomPasswordField(controller: passwordController, text: 'Password', iconData: Icons.lock_person_rounded),
-              const SizedBox(height: 30),
+          body: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: MediaQuery.of(context).size.height * 0.15),
 
-              //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> LOGIN BUTTON
-              UIhelper.customButton(() {
-                LogIn(
-                  emailController.text.toString(),
-                  passwordController.text.toString(),
-                );
-              }, "Login", Colors.lightGreen, context),
-
-              const SizedBox(
-                height: 5,
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ForgotPassword(),
-                    ),
+                UIhelper.customTextField(
+                    emailController, "Email", Icons.email, false, context),
+                CustomPasswordField(controller: passwordController, text: 'Password', iconData: Icons.lock_person_rounded),
+                const SizedBox(height: 30),
+            
+                //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> LOGIN BUTTON
+                UIhelper.customButton(() {
+                  LogIn(
+                    emailController.text.toString(),
+                    passwordController.text.toString(),
                   );
-                },
-                child: Text(
-                  'Forgotten Password?',
-                  style: TextStyle(
-                      fontSize: width * 0.04, color: Colors.blueAccent),
+                }, "Login", Colors.lightGreen, context),
+            
+                const SizedBox(
+                  height: 5,
                 ),
-              ),
-
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Don't have any account?",
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ForgotPassword(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'Forgotten Password?',
                     style: TextStyle(
-                        fontSize: width * 0.04, color: Colors.black54),
+                        fontSize: width * 0.04, color: Colors.blueAccent),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SignUpPage(),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      'Sign-up',
+                ),
+            
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Don't have any account?",
                       style: TextStyle(
-                          fontSize: width * 0.04,
-                          color: Colors.blueAccent,
-                          fontWeight: FontWeight.bold),
+                          fontSize: width * 0.04, color: Colors.black54),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SignUpPage(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'Sign-up',
+                        style: TextStyle(
+                            fontSize: width * 0.04,
+                            color: Colors.blueAccent,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
