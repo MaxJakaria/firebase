@@ -27,16 +27,14 @@ class _LoginPageState extends State<LoginPage> {
       try {
         userCredential = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: email, password: password)
-            .then((UserCredential userCredential) {
-          Navigator.pushReplacement(
+            .then(
+              (value) => Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => const MyHomePage(),
             ),
-          );
-        }).catchError((error) {
-          print("Sign-in error: $error");
-        });
+          ),
+        );
 
       } on FirebaseException {
         return UIhelper.customAlertBox(context, 'Wrong Information !');
